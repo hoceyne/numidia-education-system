@@ -1,0 +1,19 @@
+echo "## Copying files"
+git --work-tree=/var/www/project --git-dir=/var/projects/project checkout -f
+
+echo "## Running composer install"
+composer install --no-interaction --prefer-dist --optimize-autoloader
+echo "## Changing permission"
+sudo chown -R :www-data .
+
+echo "## Reloading php-fpm"
+sudo service php8.1-fpm reload
+echo "## Restarting queue workers via supervisor"
+sudo supervisorctl restart all
+echo "## Running migrations"
+php artisan migrate --force
+echo "## Running cache commands"
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
