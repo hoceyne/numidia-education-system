@@ -12,7 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -34,15 +34,14 @@ class AdminController extends Controller
             'role' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        $password = Str::random(10);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'gender' => $request->gender,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($password),
         ]);
 
         if ($user->role == 'teacher') {
@@ -108,6 +107,35 @@ class AdminController extends Controller
         $user->forceDelete();
         return response()->json(200);
     }
+
+    public function teachers($id = null)
+    {
+        if (!$id) {
+            $teachers = Teacher::all();
+            foreach ($teachers as $key => $value) {
+                # code...
+                $teachers[$key] = $value->user();
+            }
+        } else {
+            $teachers = Teacher::where('id', $id)->first()->user();
+        }
+        return $teachers;
+    }
+
+    public function students($id = null)
+    {
+        if (!$id) {
+            $students = Student::all();
+            foreach ($students as $key => $value) {
+                # code...
+                $students[$key] = $value->user();
+            }
+        } else {
+            $students = Student::where('id', $id)->first()->user();
+        }
+        return $students;
+    }
+
 
     public function sessions()
     {
@@ -176,7 +204,6 @@ class AdminController extends Controller
 
     public function archive()
     {
-
 
         return response()->json(200);
     }

@@ -8,7 +8,6 @@ use App\Models\Student;
 use App\Models\Supervisor;
 use App\Models\Teacher;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -25,6 +24,7 @@ class AuthController extends Controller
             $remember = $request->remember_me;
             Auth::login($user, $remember);
             $data = [
+                'id' => $user->id,
                 'token' => $user->createToken('API Token')->accessToken,
             ];
 
@@ -67,12 +67,17 @@ class AuthController extends Controller
 
         $user->save();
         Auth::login($user);
-        $token =$user->createToken('API Token')->accessToken;
-        return $token;
+        $data = [
+            'id' => $user->id,
+            'role' => $user->role,
+            'token' => $user->createToken('API Token')->accessToken,
+        ];
+        return response()->json($data, 200);
     }
 
     public function logout()
     {
+
         $user = Auth::user();
         if (Auth::check($user)) {
             $user->token()->revoke();
@@ -112,6 +117,10 @@ class AuthController extends Controller
         if (!$user) {
             abort(404);
         }
+        $data = [
+            'name' => $request->name,
+            'gender' => $request->gender,
+        ];
         if ($user->profile_picture !=  $request->profile_picture) {
             if ($user->profile_picture != "default_profile_picture.jpeg") {
                 File::delete('files/profile_pictures/' . $user->profile_picture);
@@ -119,13 +128,10 @@ class AuthController extends Controller
             $file = $request->file('file');
             $filename = $user->id . '.' . $file->getClientOriginalExtension();
             $file->move('files/profile_pictures/', $filename);
+            $data['profile_picture'] = $filename;
         }
 
-        $data = [
-            'name' => $request->name,
-            'gender' => $request->gender,
-            'profile_picture' => $filename,
-        ];
+
         if ($request->password) {
             $data['password'] = Hash::make($request->password);
         }
@@ -145,6 +151,7 @@ class AuthController extends Controller
             'email' => $user->email,
             'gender' => $user->gender,
             'profile_picture' => $user->profile_picture,
+            'role' => $user->role,
         ];
         return response()->json($data, 200);
     }

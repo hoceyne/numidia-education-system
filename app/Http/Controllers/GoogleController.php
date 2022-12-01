@@ -37,7 +37,12 @@ class GoogleController extends Controller
          
                 Auth::login($finduser);
         
-                return redirect()->intended('dashboard');
+                $data = [
+                    'id' => $finduser->id,
+                    'role' => $finduser->role,
+                    'token' => $finduser->createToken('API Token')->accessToken,
+                ];
+                return response()->json($data, 200);
          
             }else{
                 $newUser = User::updateOrCreate(['email' => $user->email],[
@@ -47,7 +52,12 @@ class GoogleController extends Controller
          
                 Auth::login($newUser);
         
-                return redirect()->intended('dashboard');
+                $data = [
+                    'id' => $newUser->id,
+                    'role' => $newUser->role,
+                    'token' => $newUser->createToken('API Token')->accessToken,
+                ];
+                return response()->json($data, 200);
             }
         
         } catch (Exception $e) {
