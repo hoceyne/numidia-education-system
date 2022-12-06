@@ -156,7 +156,7 @@ class AuthController extends Controller
         }
         if ($user->hasVerifiedEmail()) {
             return response()->json('Email Already Verified', 200);
-        } elseif ($request->code == $user->code) {
+        } elseif ($request->code != $user->code) {
 
             $user->markEmailAsVerified();
             return response()->json('the you have entered is wrong', 200);
