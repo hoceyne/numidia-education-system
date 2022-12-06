@@ -70,10 +70,15 @@ class AuthController extends Controller
         } else if ($user->role == 'supervisor') {
             $user->supervisor()->save(new Supervisor());
         }
+        try {
         $file = $request->file('file');
         $uploadFolder = 'files';
         $image_uploaded_path = $file->store($uploadFolder, 'public');
         $user->profile_picture = $image_uploaded_path;
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         $user->save();
 
