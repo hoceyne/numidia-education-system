@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('role')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
-            $table->string('profile_picture')->default("default_profile_picture.jpeg");
+            $table->string('profile_picture')->nullable();
+            $table->string('code')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('google_id')->nullable();

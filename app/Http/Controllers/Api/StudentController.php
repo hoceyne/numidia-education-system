@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Session;
 use App\Models\User;
 
-class ClientController extends Controller
+class StudentController extends Controller
 {
     public function sessions($id)
     {

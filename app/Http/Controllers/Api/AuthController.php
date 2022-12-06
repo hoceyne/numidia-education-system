@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ForgotPasswordEmail;
+use App\Mail\VerifyEmail;
 use App\Models\Admin;
 use App\Models\Student;
 use App\Models\Supervisor;
@@ -10,9 +12,10 @@ use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -40,18 +43,21 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:10'],
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed',],
+            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone_number' => $request->phone_number,
             'role' => $request->role,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
-            'profile_picture' => "default_profile_picture.jpeg",
+            'code' => Str::random(10),
         ]);
 
 
@@ -64,8 +70,23 @@ class AuthController extends Controller
         } else if ($user->role == 'supervisor') {
             $user->supervisor()->save(new Supervisor());
         }
+        $file = $request->file('file');
+        $uploadFolder = 'files';
+        $image_uploaded_path = $file->store($uploadFolder, 'public');
+        $user->profile_picture = $image_uploaded_path;
 
         $user->save();
+
+        try {
+            //code...
+            $data = [
+                'code' => $user->code,
+            ];
+            Mail::to($user)->send(new VerifyEmail($data));
+        } catch (\Throwable $th) {
+            //throw $th;
+            abort(400);
+        }
         Auth::login($user);
         $data = [
             'id' => $user->id,
@@ -103,6 +124,12 @@ class AuthController extends Controller
         try {
             //code...
             // Email the user new password
+            $data = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $password,
+            ];
+            Mail::to($user)->send(new ForgotPasswordEmail($data));
         } catch (\Throwable $th) {
             //throw $th;
             abort(400);
@@ -111,8 +138,37 @@ class AuthController extends Controller
         return response(200);
     }
 
+    public function verify(Request $request)
+    {
+        $request->validate([
+
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'code' => ['required', 'string',],
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            abort(404);
+        }
+        if ($user->hasVerifiedEmail()) {
+            return response()->json('Email Already Verified', 200);
+        } elseif ($request->code == $user->code) {
+
+            $user->markEmailAsVerified();
+            return response()->json('the you have entered is wrong', 200);
+        } else {
+            abort(403);
+        }
+
+        return response(200);
+    }
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:10'],
+            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
+        ]);
         $user = User::find($id);
         if (!$user) {
             abort(404);
@@ -122,22 +178,46 @@ class AuthController extends Controller
             'gender' => $request->gender,
         ];
         if ($user->profile_picture !=  $request->profile_picture) {
-            if ($user->profile_picture != "default_profile_picture.jpeg") {
-                File::delete('files/profile_pictures/' . $user->profile_picture);
-            }
+            Storage::disk('public')->delete($user->profile_picture);
             $file = $request->file('file');
-            $filename = $user->id . '.' . $file->getClientOriginalExtension();
-            $file->move('files/profile_pictures/', $filename);
-            $data['profile_picture'] = $filename;
+            $uploadFolder = 'files';
+            $image_uploaded_path = $file->store($uploadFolder, 'public');
+            $data['profile_picture'] = $image_uploaded_path;
         }
 
-
+        $message = null;
         if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+            $request->validate([
+                'old_password' => ['required',],
+                'password' => ['required', 'confirmed',],
+            ]);
+            if (Hash::check($request->old_password, $user->password)) {
+
+                $data['password'] = Hash::make($request->password);
+                $message = 'password changed successfuly';
+            } elseif ($request->old_password == $user->password) {
+                $message = 'the old password you had entered is wrong';
+            }
+        } else {
+            $message = 'you did not change the password';
         }
         User::where('id', $id)->update($data);
 
-        return response(200);
+
+        $url =  Storage::disk('public')->url($user->profile_picture);
+
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number,
+            'gender' => $user->gender,
+            'profile_picture' => $user->profile_picture,
+            'profile_picture_url' => $url,
+            'role' => $user->role,
+            'message' => $message,
+        ];
+
+        return response()->json($data, 200);
     }
 
     public function show($id)
@@ -146,13 +226,19 @@ class AuthController extends Controller
         if (!$user) {
             abort(404);
         }
+
+        $url =  Storage::disk('public')->url($user->profile_picture);
+
         $data = [
             'name' => $user->name,
             'email' => $user->email,
+            'phone_number' => $user->phone_number,
             'gender' => $user->gender,
             'profile_picture' => $user->profile_picture,
+            'profile_picture_url' => $url,
             'role' => $user->role,
         ];
+
         return response()->json($data, 200);
     }
 }

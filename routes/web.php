@@ -5,6 +5,8 @@ use App\Http\Controllers\FacebookController;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Web\EmailVerificationController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,3 +43,11 @@ WebSocketsRouter::webSocket('/my-websocket', \App\CustomWebSocketHandler::class)
 
 
 require __DIR__.'/auth.php';
+
+Route::get('/email/verify', [EmailVerificationController::class, 'view'])->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+    ->name('verification.send');

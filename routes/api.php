@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\DashboardController;
@@ -10,7 +10,6 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 use Illuminate\Support\Facades\Route;
-use Laravel\Passport\Token;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +22,15 @@ use Laravel\Passport\Token;
 |
 */
 
+
+
+
 //headers : 
-    // Accept:application/json
-    // Authorization:'Bearer '+ Token this for protected routes
+//'Content-type' : 'application/json',
+// Accept:application/json
+// Authorization:'Bearer '+ Token this for protected routes
 //body:
-    // each route has its own required body
+// each route has its own required body
 
 
 //Public routes
@@ -40,6 +43,7 @@ Route::post('/register', [AuthController::class, 'store']);
 // role:
 // email:
 // gender:
+// phone_number
 // password:
 // password_confirmation:
 
@@ -57,6 +61,8 @@ Route::controller(FacebookController::class)->group(function () {
     Route::get('/auth/facebook/callback', 'handleFacebookCallback');
 });
 
+
+
 //Protected routes
 Route::middleware('auth:api')->group(function () {
 
@@ -67,18 +73,23 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', 'index');
         //dashboard for news and statisctics
     });
+    
+    Route::post('/email/verify', [AuthController::class, 'verify']);
+        // email:
+        // code:
 
     Route::prefix('auth')->group(function () {
         Route::get('logout', [AuthController::class, 'logout']);
 
-        Route::get('profile/{id}', [AuthController::class, 'show']);
+        Route::get('profile/{id}', [AuthController::class, 'show'])->middleware('verified');
         //get the user data
 
-        Route::put('profile/{id}/update', [AuthController::class, 'update']);
+        Route::post('profile/{id}/update', [AuthController::class, 'update'])->middleware('verified');
         //modify user data
-        //the data hear has to be form data
+        //the data heer has to be form data
         // name:
         // gender:
+        // phone_number
         // password:
         // password_confirmation:
         // profile_picture: name of the picture
@@ -98,6 +109,7 @@ Route::middleware('auth:api')->group(function () {
         //create new user
         // name:
         // role:
+        // phone_number
         // email:
         // gender:
 
@@ -109,10 +121,11 @@ Route::middleware('auth:api')->group(function () {
         //modify user
         // name:
         // role:
+        // phone_number
         // email:
         // gender:
 
-        Route::get('archive', [AdminController::class, 'archive']);//not now
+        Route::get('archive', [AdminController::class, 'archive']); //not now
 
         Route::get('sessions/{id?}', [AdminController::class, 'sessions']);
 
@@ -148,17 +161,17 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
         Route::get('sessions/{id}', [ParentController::class, 'sessions']);
-         //id: represent the parent 
+        //id: represent the parent 
 
         Route::get('session/{id}', [ParentController::class, 'show']);
         //id: represent the session
     });
 
     Route::middleware('permission:student')->prefix('student')->group(function () {
-        Route::get('sessions/{id}', [ClientController::class, 'sessions']);
+        Route::get('sessions/{id}', [StudentController::class, 'sessions']);
         //id: represent the student 
 
-        Route::get('session/{id}', [ClientController::class, 'show']);
-         //id: represent the session
+        Route::get('session/{id}', [StudentController::class, 'show']);
+        //id: represent the session
     });
 });
