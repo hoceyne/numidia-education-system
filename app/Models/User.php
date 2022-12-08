@@ -27,11 +27,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'gender',
-        'profile_picture',
         'google_id',
         'facebook_id',
         'code',
     ];
+
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -69,6 +71,9 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     function sent_notifications(){
         return $this->hasMany(Notification::class,'to');
+    }
+    public function profile_picture(){
+        return $this->hasOne(File::class,'user_id','id');
     }
 
 }

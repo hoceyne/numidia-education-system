@@ -62,14 +62,14 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
+            'user_role' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string'],
         ]);
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user->role != $request->role) {
+        if ($user->role != $request->user_role) {
             if ($user->role == 'teacher') {
                 $user->teacher()->delete();
             } else if ($user->role == 'student') {
@@ -81,19 +81,19 @@ class AdminController extends Controller
             }
 
 
-            if ($request->role == 'teacher') {
+            if ($request->user_role == 'teacher') {
                 $user->teacher()->save(new Teacher());
-            } else if ($request->role == 'student') {
+            } else if ($request->user_role == 'student') {
                 $user->student()->save(new Student());
-            } else if ($request->role == 'admin') {
+            } else if ($request->user_role == 'admin') {
                 $user->admin()->save(new Admin());
-            } else if ($request->role == 'supervisor') {
+            } else if ($request->user_role == 'supervisor') {
                 $user->supervisor()->save(new Supervisor());
             }
         }
 
         $user->name = $request->name;
-        $user->role = $request->role;
+        $user->role = $request->user_role;
         $user->gender = $request->gender;
 
         $user->save();

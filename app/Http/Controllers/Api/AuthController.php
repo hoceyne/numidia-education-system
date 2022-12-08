@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\ForgotPasswordEmail;
 use App\Mail\VerifyEmail;
 use App\Models\Admin;
+use App\Models\File;
 use App\Models\Student;
 use App\Models\Supervisor;
 use App\Models\Teacher;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -28,6 +28,7 @@ class AuthController extends Controller
             Auth::login($user, $remember);
             $data = [
                 'id' => $user->id,
+                'role'=> $user->role,
                 'token' => $user->createToken('API Token')->accessToken,
             ];
 
@@ -70,17 +71,19 @@ class AuthController extends Controller
         } else if ($user->role == 'supervisor') {
             $user->supervisor()->save(new Supervisor());
         }
-        try {
-        $file = $request->file('file');
-        $uploadFolder = 'files';
-        $image_uploaded_path = $file->store($uploadFolder, 'public');
-        $user->profile_picture = $image_uploaded_path;
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
 
-        $user->save();
+        $file = $request->file('file');
+        $content = $file->get();
+        $extension = $file->extension();
+        $name = "profile picture";
+
+
+        $user->profile_picture()->create([
+            'name' => $name,
+            'content' => base64_encode($content),
+            'extension' => $extension,
+        ]);
+        $user->refresh();
 
         try {
             //code...
@@ -156,12 +159,11 @@ class AuthController extends Controller
         }
         if ($user->hasVerifiedEmail()) {
             return response()->json('Email Already Verified', 200);
-        } elseif ($request->code != $user->code) {
-
+        } elseif ($request->code == $user->code) {
             $user->markEmailAsVerified();
-            return response()->json('the you have entered is wrong', 200);
+            return response()->json('verified', 200);
         } else {
-            abort(403);
+            return response()->json('the you have entered is wrong', 403);
         }
 
         return response(200);
@@ -172,7 +174,6 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:10'],
-            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
         $user = User::find($id);
         if (!$user) {
@@ -182,12 +183,15 @@ class AuthController extends Controller
             'name' => $request->name,
             'gender' => $request->gender,
         ];
-        if ($user->profile_picture !=  $request->profile_picture) {
-            Storage::disk('public')->delete($user->profile_picture);
+        if ($request->file('file')) {
             $file = $request->file('file');
-            $uploadFolder = 'files';
-            $image_uploaded_path = $file->store($uploadFolder, 'public');
-            $data['profile_picture'] = $image_uploaded_path;
+            $content = $file->get();
+            $extension = $file->extension();
+            $user->profile_picture()->update([
+                'name' => 'profile picture',
+                'content' => base64_encode($content),
+                'extension' => $extension,
+            ]);
         }
 
         $message = null;
@@ -200,24 +204,28 @@ class AuthController extends Controller
 
                 $data['password'] = Hash::make($request->password);
                 $message = 'password changed successfuly';
-            } elseif ($request->old_password == $user->password) {
+            } else {
                 $message = 'the old password you had entered is wrong';
             }
         } else {
             $message = 'you did not change the password';
         }
+
+        $user->refresh();
+
         User::where('id', $id)->update($data);
 
 
-        $url =  Storage::disk('public')->url($user->profile_picture);
+        $file = File::where('user_id',$id)->first();
+        $src = 'data: '.$file->extension .';base64,'.$file->content; 
 
         $data = [
             'name' => $user->name,
             'email' => $user->email,
             'phone_number' => $user->phone_number,
             'gender' => $user->gender,
-            'profile_picture' => $user->profile_picture,
-            'profile_picture_url' => $url,
+            'profile_picture' => $file,
+            'profile_picture_src' => $src,
             'role' => $user->role,
             'message' => $message,
         ];
@@ -232,15 +240,16 @@ class AuthController extends Controller
             abort(404);
         }
 
-        $url =  Storage::disk('public')->url($user->profile_picture);
+        $file = File::where('user_id',$id)->first();
+        $src = 'data: '.$file->extension .';base64,'.$file->content; 
 
         $data = [
             'name' => $user->name,
             'email' => $user->email,
             'phone_number' => $user->phone_number,
             'gender' => $user->gender,
-            'profile_picture' => $user->profile_picture,
-            'profile_picture_url' => $url,
+            'profile_picture' => $file,
+            'profile_picture_src' => $src,
             'role' => $user->role,
         ];
 
