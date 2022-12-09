@@ -26,11 +26,11 @@ use Illuminate\Support\Facades\Route;
 
 
 //headers : 
-//'Content-type' : 'application/json',
-// Accept:application/json
-// Authorization:'Bearer '+ Token this for protected routes
+    //'Content-type' : 'application/json',
+    // Accept:application/json
+    // Authorization:'Bearer '+ Token this for protected routes
 //body:
-// each route has its own required body
+    // each route has its own required body
 
 
 
@@ -109,7 +109,12 @@ Route::middleware('auth:api')->group(function () {
             // name,email,gender,profile_picture,profile_picture_src,role 
 
     });
-    //for each permission tou had to sepcify the role
+
+    /*
+     *
+     * for each permission tou had to sepcify the role
+     *
+    */
 
     Route::middleware('permission:admin')->prefix('admin')->group(function () {
         Route::get('users/{id?}', [AdminController::class, 'users']);

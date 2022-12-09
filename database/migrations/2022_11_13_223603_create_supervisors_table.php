@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('supervisors', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable();
+
+            $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            
             $table->timestamps();
         });
     }

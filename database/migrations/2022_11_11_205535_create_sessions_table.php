@@ -19,8 +19,11 @@ return new class extends Migration
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
             $table->string('state')->default('pending');
-            $table->foreignUuid('teacher_id')->nullable();
+
+            $table->uuid('teacher_id')->nullable();
             $table->foreign('teacher_id')->references('id')->on('teachers');
+            $table->uuid('group_id')->nullable();
+            $table->foreign('group_id')->references('id')->on('groups');
 
             $table->timestamps();
         });

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('role')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
-            $table->string('profile_picture')->nullable();
             $table->string('code')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

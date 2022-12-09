@@ -14,15 +14,17 @@ return new class extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
             $table->string('type');
             $table->string('content');
             $table->boolean('displayed')->default(0);
-            $table->foreignUuid('to')->nullable();
-            $table->foreign('to')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignUuid('from')->nullable();
-            $table->foreign('from')->references('id')->on('users')->onDelete('cascade');
+
+            $table->uuid('to')->nullable();
+            $table->foreign('to')->references('id')->on('users');
+            $table->uuid('from')->nullable();
+            $table->foreign('from')->references('id')->on('users');
+            
             $table->softDeletes($column = 'deleted_at', $precision = 0);
             $table->timestamps();
         });

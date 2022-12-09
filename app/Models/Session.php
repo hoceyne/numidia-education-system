@@ -17,12 +17,15 @@ class Session extends Model
         'state',
     ];
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
 
     function teacher(){
         return $this->belongsTo(Teacher::class);
     }
-    function students(){
-        return $this->belongsToMany(Student::class, 'session_student', 'session_id', 'student_id');
+    function group(){
+        return $this->belongsTo(Group::class);
     }
     
 }

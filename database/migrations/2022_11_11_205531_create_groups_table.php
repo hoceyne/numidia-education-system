@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('session_student', function (Blueprint $table) {
-            $table->id();
-            $table->foreignUuid('session_id')->nullable();
-            $table->foreign('session_id')->references('id')->on('sessions');
-            $table->foreignUuid('student_id')->nullable();
-            $table->foreign('student_id')->references('id')->on('students');
+        Schema::create('groups', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->integer('members');
+            $table->string('capacity');
+
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('session_student');
+        Schema::dropIfExists('groups');
     }
 };

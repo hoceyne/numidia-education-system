@@ -15,12 +15,18 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable();
+            $table->boolean('active')->default(0);
+            $table->timestamp('activated_at')->nullable();
+
+            $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreignId('plan_id')->nullable();
+            $table->uuid('plan_id')->nullable();
             $table->foreign('plan_id')->references('id')->on('plans');
-            $table->foreignUuid('supervisor_id')->nullable();
+            $table->uuid('departement_id')->nullable();
+            $table->foreign('departement_id')->references('id')->on('departements');
+            $table->uuid('supervisor_id')->nullable();
             $table->foreign('supervisor_id')->references('id')->on('supervisors');
+
             $table->timestamps();
         });
     }

@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('teachers', function (Blueprint $table) {
+        Schema::create('departements', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('departement');
+            $table->string('school');
+            $table->string('speciality');
+            $table->integer('level');
+
+            $table->uuid('plan_id')->nullable();
+            $table->foreign('plan_id')->references('id')->on('plans');
             $table->timestamps();
         });
     }
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teachers');
+        Schema::dropIfExists('departements');
     }
 };

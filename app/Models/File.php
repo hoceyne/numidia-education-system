@@ -19,6 +19,6 @@ class File extends Model
     public $incrementing = false;
 
     public function user(){
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class);
     }
 }
