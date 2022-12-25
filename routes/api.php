@@ -254,26 +254,37 @@ Route::middleware('auth:api')->group(function () {
         //response :
         // starts_at,ends_at,classroom,teacher,group
 
-        Route::put('sessions/{id}/reject', [AdminController::class, 'reject_session']);
+        Route::put('sessions/{id}/reject', [TeacherController::class, 'reject_session']);
         //explanation: the reason why reject the session
         //response :
         // ok
 
-        Route::put('sessions/{id}/approve', [AdminController::class, 'approve_session']);
+        Route::put('sessions/{id}/approve', [TeacherController::class, 'approve_session']);
         //response :
         // ok
     });
 
     Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
-        Route::get('sessions/{id}', [ParentController::class, 'sessions']);
+        Route::get('sessions/{id?}', [ParentController::class, 'sessions']);
         //id: represent the parent 
         //response :
         // starts_at,ends_at,classroom,teacher,group
 
-        Route::get('session/{id}', [ParentController::class, 'show']);
-        //id: represent the session
+
+        Route::get('students/{id?}', [ParentController::class, 'students']);
+        //get students or secific student that belongs to the parent
         //response :
-        // starts_at,ends_at,classroom,teacher,group
+        // id,name,email,gender,role 
+
+        Route::post('studetns/create', [ParentController::class, 'add_student']);
+        //create new student
+        // name:
+        // role:
+        // phone_number:
+        // email:
+        // gender:
+        //response :
+        // ok 
     });
 
     Route::middleware('permission:student')->prefix('student')->group(function () {
