@@ -22,8 +22,6 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->uuid('plan_id')->nullable();
             $table->foreign('plan_id')->references('id')->on('plans');
-            $table->uuid('departement_id')->nullable();
-            $table->foreign('departement_id')->references('id')->on('departements');
             $table->uuid('supervisor_id')->nullable();
             $table->foreign('supervisor_id')->references('id')->on('supervisors');
 

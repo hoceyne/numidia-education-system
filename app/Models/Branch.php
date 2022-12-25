@@ -6,30 +6,21 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Departement extends Model
+class Branch extends Model
 {
     use HasFactory,HasUuids;
     
     protected $fillable = [
-        'education',
-        'sepciality',
-        'year',
+        'name',
 
     ];
 
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function branch(){
-        return $this->belongsTo(Branch::class);
-    }
+
     
-    function plans(){
-        return $this->hasMany(Plan::class);
-    }
-
-
-    function groups(){
-        return $this->hasMany(Group::class);
+    function departements(){
+        return $this->hasMany(Departement::class);
     }
 }

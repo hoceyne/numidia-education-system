@@ -13,11 +13,17 @@ class StudentController extends Controller
 
         $user = User::find($id);
         $student = $user->student();
-        $sessions = $student->sessions()->where('state', 'approved');
-        foreach ($sessions as $session) {
-            # code...
+        foreach ($student->groups() as $group) {
+            # code..
+            $sessions = $group->sessions();
+            $temp = [];
+            foreach ($sessions as $session) {
 
-            $session['teacher'] = $session->teacher();
+                if ($session->state == 'approved') {
+                    $session['teacher'] = $session->teacher();
+                    array_push($temp, $session);
+                }
+            }
         }
 
         return response()->json($sessions, 200);
@@ -27,7 +33,7 @@ class StudentController extends Controller
     {
         $session = Session::find($id);
         $session['teacher'] = $session->teacher();
-        $session['students'] = $session->students();
+        $session['group'] = $session->group();
         return response()->json($session, 200);
     }
 }

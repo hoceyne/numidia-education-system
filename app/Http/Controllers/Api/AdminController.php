@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Departement;
+use App\Models\Group;
 use App\Models\Session;
 use App\Models\Student;
 use App\Models\Supervisor;
@@ -122,6 +124,27 @@ class AdminController extends Controller
         return $teachers;
     }
 
+    public function parents($id = null)
+    {
+        if (!$id) {
+            $parents = Supervisor::all();
+            foreach ($parents as $key => $value) {
+                # code...
+                $parents[$key] = $value->user();
+            }
+        } else {
+            $parents = Supervisor::where('id', $id)->first();
+            $temp = [];
+            foreach ($parents->students() as $student) {
+                $student['user_info'] = $student->user();
+                array_push($student);
+                # code...
+            }
+            $parents['students'] = $temp;
+        }
+        return $parents;
+    }
+
     public function students($id = null)
     {
         if (!$id) {
@@ -136,17 +159,78 @@ class AdminController extends Controller
         return $students;
     }
 
-
-    public function sessions()
+    public function groups($id = null)
     {
-        $sessions = Session::all();
-        foreach ($sessions as $key => $session) {
+        if (!$id) {
+            $groups = Group::all();
+        } else {
+            $groups = Group::where('id', $id);
+        }
+        return $groups;
+    }
+
+    public function create_group(Request $request)
+    {
+
+        $teacher = Teacher::find($request->teacher_id);
+        $departement = Departement::find($request->departement_id);
+        $group = Group::create([
+            'name' => $request->name,
+            'capacity' => $request->capacity,
+            'members' => 0,
+        ]);
+        $teacher->groups()->save($group);
+        $departement->groups()->save($group);
+
+        return response()->json(200);
+    }
+
+    public function delete_group($id)
+    {
+
+        $group = Group::find($id);
+
+        $group->delete();
+
+        return response()->json(200);
+    }
+
+    public function update_group(Request $request, $id)
+    {
+
+        $group = Group::find($id);
+        $group->name = $request->name;
+        $group->capacity = $request->capacity;
+        $group->members = $request->students->length();
+
+        foreach ($request->students as $id) {
             # code...
-            $session['teacher'] = $session->teacher();
-            $session['students'] = $session->students();
+            $group->students()->save(Student::find($id));
         }
 
-        return response()->json($sessions, 200);
+        $group->save();
+
+        return response()->json(200);
+    }
+
+
+    public function sessions($id = null)
+    {
+        if ($id) {
+            $session = Session::find($id);
+            $session['teacher'] = $session->teacher();
+            $session['group'] = $session->group();
+            return response()->json($session, 200);
+        } else {
+            $sessions = Session::all();
+            foreach ($sessions as  $session) {
+                # code...
+                $session['teacher'] = $session->teacher();
+                $session['group'] = $session->group();
+            }
+
+            return response()->json($sessions, 200);
+        }
     }
 
     public function create_session(Request $request)
@@ -158,10 +242,8 @@ class AdminController extends Controller
         ]);
 
         $session->teacher()->save(Teacher::find($request->teacher_id));
-        foreach ($request->students as $student_id) {
-            # code...
-            $session->students()->save(Student::find($student_id));
-        }
+
+        $session->group()->save(Group::find($request->group_id));
 
         $session->save();
 
@@ -191,16 +273,14 @@ class AdminController extends Controller
         ]);
 
         $session->teacher()->save(Teacher::find($request->teacher_id));
-        foreach ($request->students as  $student_id) {
-            # code...
-            $session->students()->save(Student::find($student_id));
-        }
+
+        $session->group()->save(Group::find($request->group_id));
 
         $session->save();
 
         return response()->json(200);
     }
-    
+
 
     public function archive()
     {

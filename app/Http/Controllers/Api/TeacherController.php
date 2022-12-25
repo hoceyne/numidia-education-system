@@ -18,7 +18,7 @@ class TeacherController extends Controller
         foreach ($sessions as $session) {
             # code...
             $session['teacher'] = $session->teacher();
-            $session['students'] = $session->students();
+            $session['group'] = $session->group();
         }
 
         return response()->json($sessions, 200);
@@ -28,7 +28,7 @@ class TeacherController extends Controller
     {
         $session = Session::find($id);
         $session['teacher'] = $session->teacher();
-        $session['students'] = $session->students();
+        $session['group'] = $session->group();
         return response()->json($session, 200);
     }
 

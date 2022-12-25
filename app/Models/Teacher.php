@@ -13,10 +13,17 @@ class Teacher extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+
+    function plan(){
+        return $this->hasOne(Plan::class);
+    }
     function user(){
         return $this->belongsTo(User::class);
     }
     function sessions(){
         return $this->hasMany(Session::class);
+    }
+    function groups(){
+        return $this->hasMany(Group::class);
     }
 }

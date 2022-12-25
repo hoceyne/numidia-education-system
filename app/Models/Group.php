@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'name',
@@ -19,10 +19,23 @@ class Group extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    function students(){
-        return $this->belongsToMany(Student::class,'group_student','group_id','student_id');      
-    } 
-    function sessions(){
+    function students()
+    {
+        return $this->belongsToMany(Student::class, 'group_student', 'group_id', 'student_id');
+    }
+
+    function departement()
+    {
+        return $this->belongsTo(Departement::class);
+    }
+
+    function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
+
+    function sessions()
+    {
         return $this->hasMany(Session::class);
     }
 }

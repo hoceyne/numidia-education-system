@@ -13,15 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('departements', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('departement');
-            $table->string('school');
-            $table->string('speciality');
-            $table->integer('level');
-
-            $table->uuid('plan_id')->nullable();
-            $table->foreign('plan_id')->references('id')->on('plans');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -33,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('departements');
+        Schema::dropIfExists('branches');
     }
 };

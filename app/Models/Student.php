@@ -24,9 +24,6 @@ class Student extends Model
     function plan(){
         return $this->belongsTo(Plan::class);
     }
-    function departement(){
-        return $this->belongsTo(Departement::class);
-    }
     function supervisor(){
         return $this->belongsTo(Supervisor::class);
     }

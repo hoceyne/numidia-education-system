@@ -19,8 +19,14 @@ class Plan extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function departements(){
-        return $this->hasMany(Departement::class);
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class);
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
     }
 
     public function clients()
