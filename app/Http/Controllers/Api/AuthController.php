@@ -113,7 +113,7 @@ class AuthController extends Controller
             $user->tokens()->delete();
             return response(200);
         } else {
-            abort(403);find
+            abort(403);
         }
     }
 
