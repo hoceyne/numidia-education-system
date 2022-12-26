@@ -89,7 +89,10 @@ Route::middleware('auth:api')->group(function () {
     //response :
     // message  
 
+    Route::middleware('verified')->group(function () {
 
+        
+    });
 
     Route::prefix('auth')->group(function () {
         Route::get('logout', [AuthController::class, 'logout']);

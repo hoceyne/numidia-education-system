@@ -248,7 +248,6 @@ class AuthController extends Controller
             'email' => $user->email,
             'phone_number' => $user->phone_number,
             'gender' => $user->gender,
-            'profile_picture' => $file,
             'profile_picture_src' => $src,
             'role' => $user->role,
         ];
