@@ -48,7 +48,7 @@ class AuthController extends Controller
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed',],
-            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
+            // 'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
 
         $user = User::create([
@@ -72,16 +72,21 @@ class AuthController extends Controller
             $user->supervisor()->save(new Supervisor());
         }
 
-        $file = $request->file('file');
-        $content = $file->get();
-        $extension = $file->extension();
+        // $file = $request->file('file');
+        // $content = $file->get();
+        // $extension = $file->extension();
         $name = "profile picture";
 
 
+        // $user->profile_picture()->create([
+        //     'name' => $name,
+        //     'content' => base64_encode($content),
+        //     'extension' => $extension,
+        // ]);
         $user->profile_picture()->create([
             'name' => $name,
-            'content' => base64_encode($content),
-            'extension' => $extension,
+            'content' => base64_encode($request->file),
+            'extension' => 'jpeg',
         ]);
         $user->refresh();
 
