@@ -28,7 +28,7 @@ class AuthController extends Controller
             Auth::login($user, $remember);
             $data = [
                 'id' => $user->id,
-                'role'=> $user->role,
+                'role' => $user->role,
                 'token' => $user->createToken('API Token')->accessToken,
             ];
 
@@ -48,7 +48,7 @@ class AuthController extends Controller
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed',],
-            // 'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
+            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
 
         $user = User::create([
@@ -72,22 +72,18 @@ class AuthController extends Controller
             $user->supervisor()->save(new Supervisor());
         }
 
-        // $file = $request->file('file');
-        // $content = $file->get();
-        // $extension = $file->extension();
+        $file = $request->file('file');
+        $content = $file->get();
+        $extension = $file->extension();
         $name = "profile picture";
 
 
-        // $user->profile_picture()->create([
-        //     'name' => $name,
-        //     'content' => base64_encode($content),
-        //     'extension' => $extension,
-        // ]);
         $user->profile_picture()->create([
             'name' => $name,
-            'content' => base64_encode($request->file),
-            'extension' => 'jpeg',
+            'content' => base64_encode($content),
+            'extension' => $extension,
         ]);
+
         $user->refresh();
 
         try {
@@ -131,7 +127,7 @@ class AuthController extends Controller
         if (!$user) {
             abort(404);
         }
-        $password = Str::random(10);
+        $password = Str::random(32);
         $user->password = Hash::make($password);
         $user->save();
         try {
@@ -161,14 +157,41 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         if (!$user) {
             abort(404);
+        } else {
+            if ($user->hasVerifiedEmail()) {
+                return response()->json('Email Already Verified', 200);
+            } elseif ($request->code == $user->code) {
+                $user->markEmailAsVerified();
+                return response()->json('verified', 200);
+            } else {
+                return response()->json('the code you have entered is wrong', 403);
+            }
+        }
+    }
+    public function resent_verification(Request $request)
+    {
+        $request->validate([
+
+            'email' => ['required', 'string', 'email', 'max:255'],
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            abort(404);
         }
         if ($user->hasVerifiedEmail()) {
             return response()->json('Email Already Verified', 200);
-        } elseif ($request->code == $user->code) {
-            $user->markEmailAsVerified();
-            return response()->json('verified', 200);
         } else {
-            return response()->json('the you have entered is wrong', 403);
+            try {
+                //code...
+                $data = [
+                    'code' => $user->code,
+                ];
+                Mail::to($user)->send(new VerifyEmail($data));
+            } catch (\Throwable $th) {
+                //throw $th;
+                abort(400);
+            }
+            return response()->json('Code sent', 200);
         }
 
         return response(200);
@@ -206,7 +229,6 @@ class AuthController extends Controller
                 'password' => ['required', 'confirmed',],
             ]);
             if (Hash::check($request->old_password, $user->password)) {
-
                 $data['password'] = Hash::make($request->password);
                 $message = 'password changed successfuly';
             } else {
@@ -221,8 +243,7 @@ class AuthController extends Controller
         User::where('id', $id)->update($data);
 
 
-        $file = File::where('user_id',$id)->first();
-        $src = 'data: '.$file->extension .';base64,'.$file->content; 
+        $file = File::where('user_id', $id)->first();
 
         $data = [
             'name' => $user->name,
@@ -230,7 +251,6 @@ class AuthController extends Controller
             'phone_number' => $user->phone_number,
             'gender' => $user->gender,
             'profile_picture' => $file,
-            'profile_picture_src' => $src,
             'role' => $user->role,
             'message' => $message,
         ];
@@ -245,15 +265,14 @@ class AuthController extends Controller
             abort(404);
         }
 
-        $file = File::where('user_id',$id)->first();
-        $src = 'data: '.$file->extension .';base64,'.$file->content; 
+        $file = File::where('user_id', $id)->first();
 
         $data = [
             'name' => $user->name,
             'email' => $user->email,
             'phone_number' => $user->phone_number,
             'gender' => $user->gender,
-            'profile_picture_src' => $src,
+            'profile_picture' => $file,
             'role' => $user->role,
         ];
 

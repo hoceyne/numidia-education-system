@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VerifyEmail;
 use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Admin;
-use App\Models\Departement;
-use App\Models\Group;
 use App\Models\Student;
-use App\Models\Supervisor;
-use App\Models\Teacher;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class ParentController extends Controller
@@ -61,14 +58,27 @@ class ParentController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
+            'role' => 'student',
             'gender' => $request->gender,
+            'code' => Str::random(10),
             'password' => Hash::make($password),
         ]);
 
         $student = new Student();
         $user->student()->save($student);
         $supervisor->students()->save($student);
+
+        try {
+            //code...
+            $data = [
+                'code' => $user->code,
+            ];
+            Mail::to($user)->send(new VerifyEmail($data));
+        } catch (\Throwable $th) {
+            //throw $th;
+            abort(400);
+        }
+
         return response()->json(200);
     }
 

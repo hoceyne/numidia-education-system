@@ -71,9 +71,21 @@ Route::controller(FacebookController::class)->group(function () {
 });
 
 
+Route::post('/email/verify', [AuthController::class, 'verify']);
+    // email:
+    // code:
+    //response :
+    // message 
+
+
+Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
+// email:
+//response :
+// message 
+
 
 //Protected routes
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api','verified'])->group(function () {
 
     WebSocketsRouter::webSocket('/my-websocket', \App\CustomWebSocketHandler::class);
     //for create new chanel for notifications
@@ -83,26 +95,16 @@ Route::middleware('auth:api')->group(function () {
         //dashboard for news and statisctics
     });
 
-    Route::post('/email/verify', [AuthController::class, 'verify']);
-    // email:
-    // code:
-    //response :
-    // message  
-
-    Route::middleware('verified')->group(function () {
-
-        
-    });
 
     Route::prefix('auth')->group(function () {
         Route::get('logout', [AuthController::class, 'logout']);
 
-        Route::get('profile/{id}', [AuthController::class, 'show'])->middleware('verified');
+        Route::get('profile/{id}', [AuthController::class, 'show']);
         //get the user data
         //response :
         // name,email,gender,profile_picture,profile_picture_src,role  
 
-        Route::post('profile/{id}/update', [AuthController::class, 'update'])->middleware('verified');
+        Route::post('profile/{id}/update', [AuthController::class, 'update']);
         //modify user data
         //the data heer has to be form data
         // name:
@@ -279,7 +281,7 @@ Route::middleware('auth:api')->group(function () {
         //response :
         // id,name,email,gender,role 
 
-        Route::post('studetns/create', [ParentController::class, 'add_student']);
+        Route::post('students/create', [ParentController::class, 'add_student']);
         //create new student
         // name:
         // role:
@@ -291,14 +293,10 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::middleware('permission:student')->prefix('student')->group(function () {
-        Route::get('sessions/{id}', [StudentController::class, 'sessions']);
-        //id: represent the student 
+        Route::get('sessions/{id?}', [StudentController::class, 'sessions']);
+         
         //response :
         // starts_at,ends_at,classroom,teacher,group
 
-        Route::get('session/{id}', [StudentController::class, 'show']);
-        //id: represent the session
-        //response :
-        // starts_at,ends_at,classroom,teacher,group
     });
 });
