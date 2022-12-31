@@ -183,6 +183,8 @@ class AuthController extends Controller
         } else {
             try {
                 //code...
+               $user->code=Str::random(10);
+$user->save();
                 $data = [
                     'code' => $user->code,
                 ];
