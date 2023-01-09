@@ -78,13 +78,13 @@ class AuthController extends Controller
         $name = "profile picture";
 
 
-        $user->profile_picture()->create([
+        $user->profile_picture()->save(new File([
             'name' => $name,
             'content' => base64_encode($content),
             'extension' => $extension,
-        ]);
+        ]));
 
-        $user->refresh();
+        // $user->refresh();
 
         try {
             //code...
@@ -183,8 +183,8 @@ class AuthController extends Controller
         } else {
             try {
                 //code...
-               $user->code=Str::random(10);
-$user->save();
+                $user->code = Str::random(10);
+                $user->save();
                 $data = [
                     'code' => $user->code,
                 ];

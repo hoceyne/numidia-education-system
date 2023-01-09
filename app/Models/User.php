@@ -73,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Notification::class,'to');
     }
     public function profile_picture(){
-        return $this->hasOne(File::class,'user_id','id');
+        return $this->hasOne(File::class);
     }
 
 }
