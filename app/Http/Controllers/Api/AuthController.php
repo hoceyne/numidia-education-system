@@ -41,15 +41,15 @@ class AuthController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:10'],
-            'gender' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed',],
-            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
-        ]);
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'role' => ['required', 'string', 'max:255'],
+        //     'phone_number' => ['required', 'string', 'max:10'],
+        //     'gender' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+        //     'password' => ['required', 'confirmed',],
+        //     'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
+        // ]);
 
         $user = User::create([
             'name' => $request->name,
