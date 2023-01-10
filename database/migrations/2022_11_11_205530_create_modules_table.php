@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+
+            $table->uuid('departement_id')->nullable();
+            $table->foreign('departement_id')->references('id')->on('departements');
             $table->timestamps();
         });
     }

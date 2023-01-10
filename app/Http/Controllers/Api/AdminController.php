@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VerifyEmail;
 use App\Models\Admin;
 use App\Models\Departement;
+use App\Models\File;
 use App\Models\Group;
 use App\Models\Session;
 use App\Models\Student;
@@ -14,6 +16,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -37,13 +41,20 @@ class AdminController extends Controller
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
         ]);
-        $password = Str::random(10);
+
+        $content = Storage::get('default-profile-picture.jpeg');
+        $extension = 'jpeg';
+        $name = "profile picture";
+
+        $password = Str::random(32);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'gender' => $request->gender,
             'password' => Hash::make($password),
+            'code' => Str::random(10),
         ]);
 
         if ($user->role == 'teacher') {
@@ -54,6 +65,27 @@ class AdminController extends Controller
             $user->admin()->save(new Admin());
         } else if ($user->role == 'supervisor') {
             $user->supervisor()->save(new Supervisor());
+        }
+
+        $user->profile_picture()->save(new File([
+            'name' => $name,
+            'content' => base64_encode($content),
+            'extension' => $extension,
+        ]));
+
+        // $user->refresh();
+
+        try {
+            //code...
+            $data = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'code' => $user->code,
+            ];
+            Mail::to($user)->send(new VerifyEmail($data));
+        } catch (\Throwable $th) {
+            //throw $th;
+            abort(400);
         }
 
         return response()->json(200);
@@ -81,7 +113,6 @@ class AdminController extends Controller
             } else if ($user->role == 'supervisor') {
                 $user->supervisor()->delete();
             }
-
 
             if ($request->user_role == 'teacher') {
                 $user->teacher()->save(new Teacher());
@@ -166,18 +197,34 @@ class AdminController extends Controller
         } else {
             $groups = Group::where('id', $id);
         }
+        foreach ($groups as $group) {
+            # code...
+            $group['teacher']=$group->teacher()->user();
+            $group['departement']=$group->departement();
+            $group['members'] =[];
+            foreach ($group->students() as $student) {
+                # code...
+                $group['members'][] = $student->user();
+            }
+        }
         return $groups;
     }
 
     public function create_group(Request $request)
     {
 
+        $request->validate([
+            'teacher_id' => ['required'],
+            'departement_id' => ['required'],
+            'name' => ['required', 'string'],
+            'capacity' => ['required', 'integer'],
+        ]);
+
         $teacher = Teacher::find($request->teacher_id);
         $departement = Departement::find($request->departement_id);
         $group = Group::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
-            'members' => 0,
         ]);
         $teacher->groups()->save($group);
         $departement->groups()->save($group);
@@ -198,19 +245,42 @@ class AdminController extends Controller
     public function update_group(Request $request, $id)
     {
 
-        $group = Group::find($id);
-        $group->name = $request->name;
-        $group->capacity = $request->capacity;
-        $group->members = $request->students->length();
+        $request->validate([
+            'teacher_id' => ['required'],
+            'departement_id' => ['required'],
+            'name' => ['required', 'string'],
+            'capacity' => ['required', 'integer'],
 
-        foreach ($request->students as $id) {
-            # code...
-            $group->students()->save(Student::find($id));
-        }
+        ]);
+        $group = Group::find($id);
+        $group->delete();
+        $teacher = Teacher::find($request->teacher_id);
+        $departement = Departement::find($request->departement_id);
+        $group = Group::create([
+            'name' => $request->name,
+            'capacity' => $request->capacity,
+        ]);
+        $teacher->groups()->save($group);
+        $departement->groups()->save($group);
+
+
+       
 
         $group->save();
 
         return response()->json(200);
+    }
+
+    public function group_student(Request $request,$id){
+        $request->validate([
+            'students' => ['required'],
+        ]);
+        $group = Group::find($id);
+        $group->students()->detach();
+        foreach ($request->students as $student_id) {
+            # code...
+            $group->students()->attach($student_id);
+        }
     }
 
 

@@ -24,11 +24,6 @@ class Plan extends Model
         return $this->belongsTo(Departement::class);
     }
 
-    public function teacher()
-    {
-        return $this->belongsTo(Teacher::class);
-    }
-
     public function clients()
     {
         return $this->hasMany(Student::class);

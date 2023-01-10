@@ -27,7 +27,9 @@ class Departement extends Model
     function plans(){
         return $this->hasMany(Plan::class);
     }
-
+    function modules(){
+        return $this->hasMany(Module::class);
+    }
 
     function groups(){
         return $this->hasMany(Group::class);

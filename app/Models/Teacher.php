@@ -14,9 +14,7 @@ class Teacher extends Model
     public $incrementing = false;
 
 
-    function plan(){
-        return $this->hasOne(Plan::class);
-    }
+    
     function user(){
         return $this->belongsTo(User::class);
     }

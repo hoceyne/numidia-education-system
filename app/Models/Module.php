@@ -20,4 +20,7 @@ class Module extends Model
     function teachers(){
         return $this->hasMany(Teacher::class);
     }
+    function level(){
+        return $this->belongsTo(Departement::class);
+    }
 }

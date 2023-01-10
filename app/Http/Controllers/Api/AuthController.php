@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -51,6 +52,17 @@ class AuthController extends Controller
             'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
 
+        if ($request->file('file')) {
+            $file = $request->file('file');
+            $content = $file->get();
+            $extension = $file->extension();
+            $name = "profile picture";
+        }else{
+            $content = Storage::get('default-profile-picture.jpeg');
+            $extension = 'jpeg';
+            $name = "profile picture";
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -72,10 +84,7 @@ class AuthController extends Controller
             $user->supervisor()->save(new Supervisor());
         }
 
-        $file = $request->file('file');
-        $content = $file->get();
-        $extension = $file->extension();
-        $name = "profile picture";
+
 
 
         $user->profile_picture()->save(new File([
@@ -89,6 +98,8 @@ class AuthController extends Controller
         try {
             //code...
             $data = [
+                'name' => $user->name,
+                'email' => $user->email,
                 'code' => $user->code,
             ];
             Mail::to($user)->send(new VerifyEmail($data));
@@ -171,7 +182,6 @@ class AuthController extends Controller
     public function resent_verification(Request $request)
     {
         $request->validate([
-
             'email' => ['required', 'string', 'email', 'max:255'],
         ]);
         $user = User::where('email', $request->email)->first();
@@ -186,6 +196,8 @@ class AuthController extends Controller
                 $user->code = Str::random(10);
                 $user->save();
                 $data = [
+                    'name' => $user->name,
+                    'email' => $user->email,
                     'code' => $user->code,
                 ];
                 Mail::to($user)->send(new VerifyEmail($data));
@@ -195,8 +207,6 @@ class AuthController extends Controller
             }
             return response()->json('Code sent', 200);
         }
-
-        return response(200);
     }
     public function update(Request $request, $id)
     {

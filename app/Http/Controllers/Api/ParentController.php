@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Mail\VerifyEmail;
+use App\Models\File;
 use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ParentController extends Controller
@@ -55,6 +57,11 @@ class ParentController extends Controller
         $user = User::find(Auth::user()->id);
         $supervisor = $user->supervisor();
         $password = Str::random(10);
+
+        $content = Storage::get('default-profile-picture.jpeg');
+        $extension = 'jpeg';
+        $name = "profile picture";
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -68,9 +75,19 @@ class ParentController extends Controller
         $user->student()->save($student);
         $supervisor->students()->save($student);
 
+        $user->profile_picture()->save(new File([
+            'name' => $name,
+            'content' => base64_encode($content),
+            'extension' => $extension,
+        ]));
+
+        // $user->refresh();
+
         try {
             //code...
             $data = [
+                'name' => $user->name,
+                'email' => $user->email,
                 'code' => $user->code,
             ];
             Mail::to($user)->send(new VerifyEmail($data));
@@ -96,5 +113,33 @@ class ParentController extends Controller
             $students = Student::where('id', $id)->first()->user();
         }
         return $students;
+    }
+
+
+    public function update_student(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'user_role' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        $user->name = $request->name;
+        $user->role = $request->user_role;
+        $user->gender = $request->gender;
+
+        $user->save();
+
+        return response()->json(200);
+    }
+
+    public function delete_student($id)
+    {
+        $user = User::where('id', $id)->first();
+        $user->forceDelete();
+        return response()->json(200);
     }
 }

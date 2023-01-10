@@ -72,10 +72,10 @@ Route::controller(FacebookController::class)->group(function () {
 
 
 Route::post('/email/verify', [AuthController::class, 'verify']);
-    // email:
-    // code:
-    //response :
-    // message 
+// email:
+// code:
+//response :
+// message 
 
 
 Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
@@ -85,18 +85,20 @@ Route::post('/email/resent/code', [AuthController::class, 'resent_verification']
 
 
 //Protected routes
-Route::middleware(['auth:api','verified'])->group(function () {
+Route::middleware(['auth:api', 'verified'])->group(function () {
 
     WebSocketsRouter::webSocket('/my-websocket', \App\CustomWebSocketHandler::class);
     //for create new chanel for notifications
 
     Route::controller(DashboardController::class)->group(function () {
+        
         Route::get('/', 'index');
         //dashboard for news and statisctics
     });
 
 
     Route::prefix('auth')->group(function () {
+
         Route::get('logout', [AuthController::class, 'logout']);
 
         Route::get('profile/{id}', [AuthController::class, 'show']);
@@ -112,7 +114,6 @@ Route::middleware(['auth:api','verified'])->group(function () {
         // phone_number
         // password:
         // password_confirmation:
-        // profile_picture: name of the picture
         // file: containing the binary picture
         //response :
         // name,email,gender,profile_picture,profile_picture_src,role 
@@ -126,6 +127,7 @@ Route::middleware(['auth:api','verified'])->group(function () {
     */
 
     Route::middleware('permission:admin')->prefix('admin')->group(function () {
+
         Route::get('users/{id?}', [AdminController::class, 'users']);
         //get users or secific user
         //response :
@@ -218,7 +220,40 @@ Route::middleware(['auth:api','verified'])->group(function () {
         //benefits:
         //departement_id:id of the departement
         //teacher_id:id of the teacher
-        
+
+        //response :
+        // ok 
+
+        Route::get('groups/{id?}', [AdminController::class, 'groups']);
+        //response :
+        // name,members,capacity,teacher,departement
+
+        Route::post('groups/create', [AdminController::class, 'create_group']);
+        //name:
+        //capacity
+        //departement_id:id of the departement
+        //teacher_id:id of the teacher
+
+        //response :
+        // ok
+
+        Route::delete('groups/{id}/delete', [AdminController::class, 'delete_group']);
+        //response :
+        // ok
+
+        Route::put('groups/{id}/update', [AdminController::class, 'update_group']);
+        //name:
+        //capacity:
+        //departement_id:id of the departement
+        //teacher_id:id of the teacher
+
+
+        //response :
+        // ok 
+        Route::post('groups/{id}/students', [AdminController::class, 'group_student']);
+
+        //students:ids of the students
+
         //response :
         // ok 
 
@@ -249,6 +284,7 @@ Route::middleware(['auth:api','verified'])->group(function () {
     });
 
     Route::middleware('permission:teacher')->prefix('teacher')->group(function () {
+
         Route::get('sessions/{id}', [TeacherController::class, 'sessions']);
         //id: represent the teacher 
         //response :
@@ -270,6 +306,7 @@ Route::middleware(['auth:api','verified'])->group(function () {
     });
 
     Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
+
         Route::get('sessions/{id?}', [ParentController::class, 'sessions']);
         //id: represent the parent 
         //response :
@@ -290,11 +327,25 @@ Route::middleware(['auth:api','verified'])->group(function () {
         // gender:
         //response :
         // ok 
+
+        Route::put('students/{id}/update', [ParentController::class, 'update_student']);
+        //update new student
+        // name:
+        // role:
+        // phone_number:
+        // email:
+        // gender:
+        //response :
+        // ok
+
+        Route::delete('students/{id}/delete', [ParentController::class, 'delete_student']);
+        //response :
+        // ok 
     });
 
     Route::middleware('permission:student')->prefix('student')->group(function () {
+
         Route::get('sessions/{id?}', [StudentController::class, 'sessions']);
-         
         //response :
         // starts_at,ends_at,classroom,teacher,group
 

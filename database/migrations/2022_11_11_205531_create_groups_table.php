@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->integer('members');
-            $table->string('capacity');
+            $table->integer('members')->default(0);
+            $table->integer('capacity');
 
             $table->uuid('teacher_id')->nullable();
             $table->foreign('teacher_id')->references('id')->on('teachers');
