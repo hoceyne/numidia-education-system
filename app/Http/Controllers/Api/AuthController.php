@@ -49,19 +49,12 @@ class AuthController extends Controller
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed',],
-            'file' => ['required', 'image:jpeg,png,jpg,gif,svg'],
         ]);
 
-        if ($request->file('file')) {
-            $file = $request->file('file');
-            $content = $file->get();
-            $extension = $file->extension();
-            $name = "profile picture";
-        }else{
-            $content = Storage::get('default-profile-picture.jpeg');
-            $extension = 'jpeg';
-            $name = "profile picture";
-        }
+
+        $content = Storage::get('default-profile-picture.jpeg');
+        $extension = 'jpeg';
+        $name = "profile picture";
 
         $user = User::create([
             'name' => $request->name,
