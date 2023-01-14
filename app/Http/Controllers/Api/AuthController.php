@@ -270,7 +270,7 @@ class AuthController extends Controller
             abort(404);
         }
 
-        $file = File::where('user_id', $id)->first();
+        $file = $user->file();
 
         $data = [
             'name' => $user->name,
