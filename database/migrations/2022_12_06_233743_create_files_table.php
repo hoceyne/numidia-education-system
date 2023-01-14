@@ -15,7 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('files', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->unique();;
             $table->string('name');
             $table->string('extension');
             $table->uuid('user_id')->nullable();

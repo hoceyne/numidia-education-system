@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('branches', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->unique();;
             $table->string('name');
             $table->timestamps();
         });

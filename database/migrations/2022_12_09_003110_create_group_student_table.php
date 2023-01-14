@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('group_student', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->unique();;
             $table->uuid('group_id')->nullable();
             $table->foreign('group_id')->references('id')->on('groups');
             $table->uuid('student_id')->nullable();

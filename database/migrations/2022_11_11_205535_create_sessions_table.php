@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sessions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->unique();;
             $table->string('classroom');
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
