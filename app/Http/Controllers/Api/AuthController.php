@@ -270,7 +270,7 @@ class AuthController extends Controller
             abort(404);
         }
 
-        $file = $user->file();
+        $file = $user->profile_picture();
 
         $data = [
             'name' => $user->name,
