@@ -166,7 +166,14 @@ class AuthController extends Controller
                 return response()->json('Email Already Verified', 200);
             } elseif ($request->code == $user->code) {
                 $user->markEmailAsVerified();
-                return response()->json('verified', 200);
+                Auth::login($user);
+        $data = [
+            'id' => $user->id,
+            'role' => $user->role,
+            'token' => $user->createToken('API Token')->accessToken,
+            'message' => 'verified',
+        ];
+                return response()->json($data, 200);
             } else {
                 return response()->json('the code you have entered is wrong', 403);
             }
