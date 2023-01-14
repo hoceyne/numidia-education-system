@@ -73,4 +73,47 @@ class DepartementController extends Controller
 
         return response()->json(200);
     }
+
+    public function branchs($id = null)
+    {
+        if ($id) {
+            $branch = Branch::find($id);
+
+            return response()->json($branch, 200);
+        } else {
+            $branchs = Branch::all();
+
+
+            return response()->json($branchs, 200);
+        }
+    }
+
+    public function create_branch(Request $request)
+    {
+        $branch = Branch::create([
+            'name' => $request->name,
+
+        ]);
+
+        return response()->json(200);
+    }
+
+    public function delete_branch($id)
+    {
+
+        $branch = Branch::find($id);
+
+        $branch->delete();
+
+        return response()->json(200);
+    }
+
+    public function update_branch(Request $request, $id)
+    {
+
+        $branch = Branch::find($id);
+        $branch->name= $request->name;
+
+        return response()->json(200);
+    }
 }

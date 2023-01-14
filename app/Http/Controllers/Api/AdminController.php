@@ -161,14 +161,20 @@ class AdminController extends Controller
             $parents = Supervisor::all();
             foreach ($parents as $key => $value) {
                 # code...
+                $temp = [];
+                foreach ($value->students() as $student) {
+                    $temp[] = $student->user();
+                    # code...
+                }
                 $parents[$key] = $value->user();
+
+                $parents[$key]['students'] = $temp;
             }
         } else {
             $parents = Supervisor::where('id', $id)->first();
             $temp = [];
             foreach ($parents->students() as $student) {
-                $student['user_info'] = $student->user();
-                array_push($student);
+                $temp[] = $student->user();
                 # code...
             }
             $parents['students'] = $temp;
@@ -196,12 +202,13 @@ class AdminController extends Controller
             $groups = Group::all();
         } else {
             $groups = Group::where('id', $id);
+            
         }
         foreach ($groups as $group) {
             # code...
-            $group['teacher']=$group->teacher()->user();
-            $group['departement']=$group->departement();
-            $group['members'] =[];
+            $group['teacher'] = $group->teacher()->user();
+            $group['departement'] = $group->departement();
+            $group['members'] = [];
             foreach ($group->students() as $student) {
                 # code...
                 $group['members'][] = $student->user();
@@ -264,14 +271,15 @@ class AdminController extends Controller
         $departement->groups()->save($group);
 
 
-       
+
 
         $group->save();
 
         return response()->json(200);
     }
 
-    public function group_student(Request $request,$id){
+    public function group_student(Request $request, $id)
+    {
         $request->validate([
             'students' => ['required'],
         ]);

@@ -71,27 +71,33 @@ Route::controller(FacebookController::class)->group(function () {
 });
 
 
-Route::post('/email/verify', [AuthController::class, 'verify']);
+
+
+
+//Protected routes
+
+
+Route::post('/email/verify', [AuthController::class, 'verify'])->middleware('auth:api');
 // email:
 // code:
 //response :
 // message 
 
 
-Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
+Route::post('/email/resent/code', [AuthController::class, 'resent_verification'])->middleware('auth:api');
 // email:
 //response :
 // message 
 
 
-//Protected routes
+//email verification required
 Route::middleware(['auth:api', 'verified'])->group(function () {
 
     WebSocketsRouter::webSocket('/my-websocket', \App\CustomWebSocketHandler::class);
     //for create new chanel for notifications
 
     Route::controller(DashboardController::class)->group(function () {
-        
+
         Route::get('/', 'index');
         //dashboard for news and statisctics
     });
@@ -122,11 +128,29 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
     /*
      *
-     * for each permission tou had to sepcify the role
+     * for each permission you have to sepcify the role in params
      *
     */
 
     Route::middleware('permission:admin')->prefix('admin')->group(function () {
+
+        Route::get('branchs/{id?}', [DepartementController::class, 'branchs']);
+        //response :
+        // name
+
+        Route::post('branchs/create', [DepartementController::class, 'create_branch']);
+        //name
+        //response :
+        // ok 
+
+        Route::delete('branchs/{id}/delete', [DepartementController::class, 'delete_branch']);
+        //response :
+        // ok
+
+        Route::put('branchs/{id}/update', [DepartementController::class, 'update_branch']);
+        //name
+        //response :
+        // ok 
 
         Route::get('users/{id?}', [AdminController::class, 'users']);
         //get users or secific user
@@ -141,11 +165,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //get students or secific student
         //response :
         // id,name,email,gender,role 
+        Route::get('parents/{id?}', [AdminController::class, 'parents']);
+        //get parent or secific parent
+        //response :
+        // id,name,email,gender,role 
 
         Route::post('users/create', [AdminController::class, 'store']);
         //create new user
         // name:
-        // role:
+        // user_role:
         // phone_number
         // email:
         // gender:
@@ -161,7 +189,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::put('users/update', [AdminController::class, 'update']);
         //modify user
         // name:
-        // role:
+        // user_role:
         // phone_number
         // email:
         // gender:
@@ -321,7 +349,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('students/create', [ParentController::class, 'add_student']);
         //create new student
         // name:
-        // role:
         // phone_number:
         // email:
         // gender:
@@ -331,7 +358,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::put('students/{id}/update', [ParentController::class, 'update_student']);
         //update new student
         // name:
-        // role:
         // phone_number:
         // email:
         // gender:
