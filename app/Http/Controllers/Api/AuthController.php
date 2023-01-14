@@ -167,12 +167,12 @@ class AuthController extends Controller
             } elseif ($request->code == $user->code) {
                 $user->markEmailAsVerified();
                 Auth::login($user);
-        $data = [
-            'id' => $user->id,
-            'role' => $user->role,
-            'token' => $user->createToken('API Token')->accessToken,
-            'message' => 'verified',
-        ];
+                $data = [
+                    'id' => $user->id,
+                    'role' => $user->role,
+                    'token' => $user->createToken('API Token')->accessToken,
+                    'message' => 'verified',
+                ];
                 return response()->json($data, 200);
             } else {
                 return response()->json('the code you have entered is wrong', 403);
@@ -277,7 +277,7 @@ class AuthController extends Controller
             abort(404);
         }
 
-        $file = $user->profile_picture()->toSql();
+        $file = $user->profile_picture()->dd();
 
         $data = [
             'name' => $user->name,
