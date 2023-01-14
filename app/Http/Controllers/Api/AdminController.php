@@ -37,7 +37,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
+            'user_role' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
         ]);
@@ -51,7 +51,7 @@ class AdminController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
+            'role' => $request->user_role,
             'gender' => $request->gender,
             'password' => Hash::make($password),
             'code' => Str::random(10),

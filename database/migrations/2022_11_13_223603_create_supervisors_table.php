@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('supervisors', function (Blueprint $table) {
-            $table->uuid('id')->primary()->unique();;
+            $table->uuid('id')->primary()->unique();
 
             $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
