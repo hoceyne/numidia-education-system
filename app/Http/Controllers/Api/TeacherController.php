@@ -13,12 +13,12 @@ class TeacherController extends Controller
     public function sessions($id)
     {
         $user = User::find($id);
-        $teacher = $user->Teacher();
-        $sessions = $teacher->sessions();
+        $teacher = $user->teacher;
+        $sessions = $teacher->sessions;
         foreach ($sessions as $session) {
             # code...
-            $session['teacher'] = $session->teacher();
-            $session['group'] = $session->group();
+            $session['teacher'] = $session->teacher;
+            $session['group'] = $session->group;
         }
 
         return response()->json($sessions, 200);
@@ -27,8 +27,8 @@ class TeacherController extends Controller
     public function show($id)
     {
         $session = Session::find($id);
-        $session['teacher'] = $session->teacher();
-        $session['group'] = $session->group();
+        $session['teacher'] = $session->teacher;
+        $session['group'] = $session->group;
         return response()->json($session, 200);
     }
 

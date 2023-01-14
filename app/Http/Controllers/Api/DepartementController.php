@@ -15,8 +15,9 @@ class DepartementController extends Controller
     {
         if ($id) {
             $departement = Departement::find($id);
+            $departement['branch'] = $departement->branch;
             $departement['groups'] = [];
-            foreach ($departement->groups() as $group) {
+            foreach ($departement->groups as $group) {
                 # code...
                 array_push($departement['groups'], $group);
             }

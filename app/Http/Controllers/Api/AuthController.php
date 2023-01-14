@@ -166,11 +166,11 @@ class AuthController extends Controller
                 return response()->json('Email Already Verified', 200);
             } elseif ($request->code == $user->code) {
                 $user->markEmailAsVerified();
-                Auth::login($user);
+                // Auth::login($user);
                 $data = [
-                    'id' => $user->id,
-                    'role' => $user->role,
-                    'token' => $user->createToken('API Token')->accessToken,
+                    // 'id' => $user->id,
+                    // 'role' => $user->role,
+                    // 'token' => $user->createToken('API Token')->accessToken,
                     'message' => 'verified',
                 ];
                 return response()->json($data, 200);
@@ -255,7 +255,7 @@ class AuthController extends Controller
         User::where('id', $id)->update($data);
 
 
-        $file = File::where('user_id', $id)->first();
+        $file = $user->profile_picture;
 
         $data = [
             'name' => $user->name,
@@ -267,7 +267,7 @@ class AuthController extends Controller
             'message' => $message,
         ];
 
-        return response()->json($data, 200);
+        return response()->json($file, 200);
     }
 
     public function show($id)

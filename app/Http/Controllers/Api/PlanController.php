@@ -18,7 +18,7 @@ class PlanController extends Controller
             $plan['clients'] = [];
             foreach ($plan->clients as $client) {
                 # code...
-                $client['user_info'] = $client->user();
+                $client['user_info'] = $client->user;
                 array_push($plan['clients'], $client);
             }
 
@@ -30,7 +30,7 @@ class PlanController extends Controller
                 $plan['clients'] = [];
                 foreach ($plan->clients as $client) {
                     # code...
-                    $client['user_info'] = $client->user();
+                    $client['user_info'] = $client->user;
                     array_push($plan['clients'], $client);
                 }
             }

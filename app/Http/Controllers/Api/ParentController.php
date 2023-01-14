@@ -22,23 +22,23 @@ class ParentController extends Controller
 
         if ($id) {
             $session = Session::find($id);
-            $session['teacher'] = $session->teacher();
-            $session['group'] = $session->group();
+            $session['teacher'] = $session->teacher;
+            $session['group'] = $session->group;
             return response()->json($session, 200);
         } else {
             $user = User::find(Auth::user()->id);
-            $supervisor = $user->supervisor();
+            $supervisor = $user->supervisor;
             $all_sessions = [];
-            foreach ($supervisor->students() as $student) {
+            foreach ($supervisor->students as $student) {
 
-                foreach ($student->groups() as $group) {
+                foreach ($student->groups as $group) {
                     # code..
-                    $sessions = $group->sessions();
+                    $sessions = $group->sessions;
                     $temp = [];
                     foreach ($sessions as $session) {
 
                         if ($session->state == 'approved') {
-                            $session['teacher'] = $session->teacher();
+                            $session['teacher'] = $session->teacher->user;
                             array_push($temp, $session);
                         }
                     }
@@ -103,11 +103,11 @@ class ParentController extends Controller
     {
         if (!$id) {
             $user = User::find(Auth::user()->id);
-            $supervisor = $user->supervisor();
-            $students = $supervisor->students();
+            $supervisor = $user->supervisor;
+            $students = $supervisor->students;
             foreach ($students as $key => $value) {
                 # code...
-                $students[$key] = $value->user();
+                $students[$key] = $value->user;
             }
         } else {
             $students = Student::where('id', $id)->first()->user();

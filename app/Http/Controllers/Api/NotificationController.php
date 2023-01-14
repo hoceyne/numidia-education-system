@@ -86,7 +86,7 @@ class NotificationController extends Controller
     {
         if (!$id) {
             $user = Auth::user();
-            $notifications = $user->received_notifications->all();
+            $notifications = $user->received_notifications;
 
             foreach ($notifications as $notification) {
 
@@ -109,7 +109,7 @@ class NotificationController extends Controller
 
         if (!$id) {
             $user = Auth::user();
-            $notifications = $user->received_notifications->all();
+            $notifications = $user->received_notifications;
 
             foreach ($notifications as $notification) {
 

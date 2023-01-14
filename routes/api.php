@@ -76,7 +76,7 @@ Route::controller(FacebookController::class)->group(function () {
 
 //Protected routes
 
-Route::middleware(['auth:api', 'verified'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
   Route::post('/email/verify', [AuthController::class, 'verify']);
 // email:
 // code:

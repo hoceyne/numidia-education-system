@@ -147,10 +147,10 @@ class AdminController extends Controller
             $teachers = Teacher::all();
             foreach ($teachers as $key => $value) {
                 # code...
-                $teachers[$key] = $value->user();
+                $teachers[$key] = $value->user;
             }
         } else {
-            $teachers = Teacher::where('id', $id)->first()->user();
+            $teachers = Teacher::where('id', $id)->first()->user;
         }
         return $teachers;
     }
@@ -162,19 +162,19 @@ class AdminController extends Controller
             foreach ($parents as $key => $value) {
                 # code...
                 $temp = [];
-                foreach ($value->students() as $student) {
-                    $temp[] = $student->user();
+                foreach ($value->students as $student) {
+                    $temp[] = $student->user;
                     # code...
                 }
-                $parents[$key] = $value->user();
+                $parents[$key] = $value->user;
 
                 $parents[$key]['students'] = $temp;
             }
         } else {
             $parents = Supervisor::where('id', $id)->first();
             $temp = [];
-            foreach ($parents->students() as $student) {
-                $temp[] = $student->user();
+            foreach ($parents->students as $student) {
+                $temp[] = $student->user;
                 # code...
             }
             $parents['students'] = $temp;
@@ -188,10 +188,10 @@ class AdminController extends Controller
             $students = Student::all();
             foreach ($students as $key => $value) {
                 # code...
-                $students[$key] = $value->user();
+                $students[$key] = $value->user;
             }
         } else {
-            $students = Student::where('id', $id)->first()->user();
+            $students = Student::where('id', $id)->first()->user;
         }
         return $students;
     }
@@ -202,16 +202,16 @@ class AdminController extends Controller
             $groups = Group::all();
         } else {
             $groups = Group::where('id', $id);
-            
+
         }
         foreach ($groups as $group) {
             # code...
-            $group['teacher'] = $group->teacher()->user();
-            $group['departement'] = $group->departement();
+            $group['teacher'] = $group->teacher->user;
+            $group['departement'] = $group->departement;
             $group['members'] = [];
-            foreach ($group->students() as $student) {
+            foreach ($group->students as $student) {
                 # code...
-                $group['members'][] = $student->user();
+                $group['members'][] = $student->user;
             }
         }
         return $groups;
@@ -296,15 +296,15 @@ class AdminController extends Controller
     {
         if ($id) {
             $session = Session::find($id);
-            $session['teacher'] = $session->teacher();
-            $session['group'] = $session->group();
+            $session['teacher'] = $session->teacher->user;
+            $session['group'] = $session->group;
             return response()->json($session, 200);
         } else {
             $sessions = Session::all();
             foreach ($sessions as  $session) {
                 # code...
-                $session['teacher'] = $session->teacher();
-                $session['group'] = $session->group();
+                $session['teacher'] = $session->teacher->user;
+                $session['group'] = $session->group;
             }
 
             return response()->json($sessions, 200);
