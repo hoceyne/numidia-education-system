@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plan;
 use App\Models\Session;
+use App\Models\Student;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
-    public function sessions($id=null)
+    public function sessions($id = null)
     {
         if ($id) {
             $session = Session::find($id);
@@ -24,7 +27,7 @@ class StudentController extends Controller
                 $sessions = $group->sessions;
                 $temp = [];
                 foreach ($sessions as $session) {
-    
+
                     if ($session->state == 'approved') {
                         $session['teacher'] = $session->teacher->user;
                         $session['group'] = $session->group;
@@ -35,4 +38,5 @@ class StudentController extends Controller
             return response()->json($sessions, 200);
         }
     }
+   
 }

@@ -340,6 +340,14 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //response :
         // ok
     });
+    Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
+        Route::post('clients/choose/plan', [PlanController::class, 'choose_plan']);
+        // client_id:
+        // plan_id:
+        //response :
+        // ok
+    });
+
 
     Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
 

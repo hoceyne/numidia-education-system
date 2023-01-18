@@ -84,4 +84,16 @@ class PlanController extends Controller
 
         return response()->json(200);
     }
+    public function choose_plan(Request $request)
+    {
+        $request->validate([
+
+            'client_id' => ['required', 'string', 'email', 'max:255'],
+            'plan_id' => ['required', 'string',],
+        ]);
+        $plan = Plan::find($request->plan_id);
+        $plan->clients()->attash($request->client_id);
+
+        return response()->json(200);
+    }
 }
