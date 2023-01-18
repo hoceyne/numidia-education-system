@@ -77,17 +77,22 @@ Route::controller(FacebookController::class)->group(function () {
 //Protected routes
 
 Route::middleware(['auth:api'])->group(function () {
-  Route::post('/email/verify', [AuthController::class, 'verify']);
-// email:
-// code:
-//response :
-// message 
+    Route::post('/email/verify', [AuthController::class, 'verify']);
+    // email:
+    // code:
+    //response :
+    // message 
+    Route::get('/email/verify', [AuthController::class, 'verify_by_link']);
+    // id:
+    // code:
+    //response :
+    // message 
 
 
-Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
-// email:
-//response :
-// message   
+    Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
+    // email:
+    //response :
+    // message   
 });
 
 

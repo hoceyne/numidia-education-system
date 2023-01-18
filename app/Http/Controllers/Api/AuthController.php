@@ -94,6 +94,7 @@ class AuthController extends Controller
         try {
             //code...
             $data = [
+                'url' => env('APP_URL') . '/api/email/verify?id=' . $user->id . '&code=' . $user->code,
                 'name' => $user->name,
                 'email' => $user->email,
                 'code' => $user->code,
@@ -169,6 +170,8 @@ class AuthController extends Controller
                 return response()->json('Email Already Verified', 200);
             } elseif ($request->code == $user->code) {
                 $user->markEmailAsVerified();
+                $user->code = null;
+                $user->save();
                 // Auth::login($user);
                 $data = [
                     // 'id' => $user->id,
@@ -179,6 +182,36 @@ class AuthController extends Controller
                 return response()->json($data, 200);
             } else {
                 return response()->json('the code you have entered is wrong', 403);
+            }
+        }
+    }
+    public function verify_by_link(Request $request)
+    {
+        $request->validate([
+
+            'id' => ['required'],
+            'code' => ['required', 'string',],
+        ]);
+        $user = User::where('id', $request->id)->first();
+        if (!$user) {
+            abort(404);
+        } else {
+            if ($user->hasVerifiedEmail()) {
+                return response()->json('Email Already Verified', 200);
+            } elseif ($request->code == $user->code) {
+                $user->markEmailAsVerified();
+                $user->code = null;
+                $user->save();
+                // Auth::login($user);
+                $data = [
+                    // 'id' => $user->id,
+                    // 'role' => $user->role,
+                    // 'token' => $user->createToken('API Token')->accessToken,
+                    'message' => 'verified',
+                ];
+                return response()->json($data, 200);
+            } else {
+                return response()->json('the link you are trying to access is no longer available', 403);
             }
         }
     }
@@ -199,6 +232,7 @@ class AuthController extends Controller
                 $user->code = Str::random(10);
                 $user->save();
                 $data = [
+                    'url' => env('APP_URL') . '/api/email/verify?id=' . $user->id . '&code=' . $user->code,
                     'name' => $user->name,
                     'email' => $user->email,
                     'code' => $user->code,
