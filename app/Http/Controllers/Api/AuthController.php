@@ -50,6 +50,9 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed',],
         ]);
+        $request->merge([
+            "role" =>  strtolower($request->role),
+        ]);
 
 
         $content = Storage::get('default-profile-picture.jpeg');
