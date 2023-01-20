@@ -1,55 +1,61 @@
 <?php
-
+  
 namespace App\Http\Controllers;
-
+  
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
-class FacebookController extends Controller
+  
+class SocialController extends Controller
 {
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function redirectToFacebook()
+    public function redirectTo($driver)
     {
-        return Socialite::driver('facebook')->stateless()->redirect();
-    }
+        return response()->json([
+            'url' => Socialite::driver($driver)->stateless()->redirect()->getTargetUrl(),
+        ]);
+}
 
+    
+          
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function handleFacebookCallback()
+    public function handleCallback($driver)
     {
         try {
-            $user = Socialite::driver('facebook')->stateless()->user();
-
-            $finduser = User::where('facebook_id', $user->id)->first();
-
-            if ($finduser) {
-
+        
+            $user = Socialite::driver($driver)->stateless()->user();
+         
+            $finduser = User::where($driver.'_id', $user->id)->first();
+         
+            if($finduser){
+         
                 Auth::login($finduser);
-
+        
                 $data = [
                     'id' => $finduser->id,
                     'role' => $finduser->role,
                     'token' => $finduser->createToken('API Token')->accessToken,
                 ];
                 return response()->json($data, 200);
-            } else {
-                $newUser = User::updateOrCreate(['email' => $user->email], [
-                    'name' => $user->name,
-                    'facebook_id' => $user->id,
-                ]);
-
+         
+            }else{
+                $newUser = User::updateOrCreate(['email' => $user->email],[
+                        'name' => $user->name,
+                        $driver.'_id'=> $user->id,
+                    ]);
+         
                 Auth::login($newUser);
-
+        
                 $data = [
                     'id' => $newUser->id,
                     'role' => $newUser->role,
@@ -57,6 +63,7 @@ class FacebookController extends Controller
                 ];
                 return response()->json($data, 200);
             }
+        
         } catch (Exception $e) {
             dd($e->getMessage());
         }

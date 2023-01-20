@@ -8,8 +8,7 @@ use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GoogleController;
-use App\Http\Controllers\FacebookController;
+use App\Http\Controllers\SocialController;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 use Illuminate\Support\Facades\Route;
 
@@ -60,15 +59,11 @@ Route::post('/forgotpassword', [AuthController::class, 'forgotpassword']);
 // ok
 
 //social authentification
-Route::controller(GoogleController::class)->group(function () {
-    Route::get('/auth/google', 'redirectToGoogle');
-    Route::get('/auth/google/callback', 'handleGoogleCallback');
+Route::controller(SocialController::class)->group(function () {
+    Route::get('/auth/{driver}', 'redirectTo');
+    Route::get('/auth/{driver}/callback', 'handleCallback');
 });
 
-Route::controller(FacebookController::class)->group(function () {
-    Route::get('/auth/facebook', 'redirectToFacebook');
-    Route::get('/auth/facebook/callback', 'handleFacebookCallback');
-});
 
 
 
