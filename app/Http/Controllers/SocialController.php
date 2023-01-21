@@ -63,6 +63,7 @@ class SocialController extends Controller
 //                 ];
 //                 return response()->json($data, 200);
 //             }
+            return redirect('http://localhost:3000/login');
             return response()->json($user,200);
         
         } catch (Exception $e) {
