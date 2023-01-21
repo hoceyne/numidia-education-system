@@ -35,34 +35,35 @@ class SocialController extends Controller
         
             $user = Socialite::driver($driver)->stateless()->user();
          
-            $finduser = User::where($driver.'_id', $user->id)->first();
+//             $finduser = User::where($driver.'_id', $user->id)->first();
          
-            if($finduser){
+//             if($finduser){
          
-                Auth::login($finduser);
+//                 Auth::login($finduser);
         
-                $data = [
-                    'id' => $finduser->id,
-                    'role' => $finduser->role,
-                    'token' => $finduser->createToken('API Token')->accessToken,
-                ];
-                return response()->json($data, 200);
+//                 $data = [
+//                     'id' => $finduser->id,
+//                     'role' => $finduser->role,
+//                     'token' => $finduser->createToken('API Token')->accessToken,
+//                 ];
+//                 return response()->json($data, 200);
          
-            }else{
-                $newUser = User::updateOrCreate(['email' => $user->email],[
-                        'name' => $user->name,
-                        $driver.'_id'=> $user->id,
-                    ]);
+//             }else{
+//                 $newUser = User::updateOrCreate(['email' => $user->email],[
+//                         'name' => $user->name,
+//                         $driver.'_id'=> $user->id,
+//                     ]);
          
-                Auth::login($newUser);
+//                 Auth::login($newUser);
         
-                $data = [
-                    'id' => $newUser->id,
-                    'role' => $newUser->role,
-                    'token' => $newUser->createToken('API Token')->accessToken,
-                ];
-                return response()->json($data, 200);
-            }
+//                 $data = [
+//                     'id' => $newUser->id,
+//                     'role' => $newUser->role,
+//                     'token' => $newUser->createToken('API Token')->accessToken,
+//                 ];
+//                 return response()->json($data, 200);
+//             }
+            return response()->json($user,200);
         
         } catch (Exception $e) {
             dd($e->getMessage());
