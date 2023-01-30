@@ -58,16 +58,6 @@ Route::post('/forgotpassword', [AuthController::class, 'forgotpassword']);
 //response :
 // ok
 
-//social authentification
-Route::controller(SocialController::class)->group(function () {
-    Route::get('/auth/{driver}', 'redirectTo');
-    Route::get('/auth/{driver}/callback', 'handleCallback');
-});
-
-
-
-
-
 
 //Protected routes
 
