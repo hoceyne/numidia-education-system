@@ -53,6 +53,24 @@ Route::post('/register', [AuthController::class, 'store']);
 //response :
 // token,role,id
 
+//Public routes
+Route::post('/auth/{provider}/login', [AuthController::class, 'provider_login']);
+// email:
+// password:
+//response :
+// token,role,id
+
+Route::post('/auth/{provider}/register', [AuthController::class, 'provider_store']);
+// name:
+// role:
+// email:
+// gender:
+// phone_number
+// password:
+// password_confirmation:
+//response :
+// token,role,id
+
 Route::post('/forgotpassword', [AuthController::class, 'forgotpassword']);
 // email:
 //response :
