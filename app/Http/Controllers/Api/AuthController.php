@@ -30,6 +30,7 @@ class AuthController extends Controller
             $data = [
                 'id' => $user->id,
                 'role' => $user->role,
+                'profile_picture' => $user->profile_picture,
                 'token' => $user->createToken('API Token')->accessToken,
             ];
 
@@ -66,7 +67,7 @@ class AuthController extends Controller
             'role' => $request->role,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
-            'code' => Str::random(10),
+            'code' => Str::random(6),
         ]);
 
 
@@ -108,6 +109,7 @@ class AuthController extends Controller
         $data = [
             'id' => $user->id,
             'role' => $user->role,
+            'profile_picture' => $user->profile_picture,
             'token' => $user->createToken('API Token')->accessToken,
         ];
         return response()->json($data, 200);
@@ -185,36 +187,7 @@ class AuthController extends Controller
             }
         }
     }
-    public function verify_by_link(Request $request)
-    {
-        $request->validate([
-
-            'id' => ['required'],
-            'code' => ['required', 'string',],
-        ]);
-        $user = User::where('id', $request->id)->first();
-        if (!$user) {
-            abort(404);
-        } else {
-            if ($user->hasVerifiedEmail()) {
-                return response()->json('Email Already Verified', 200);
-            } elseif ($request->code == $user->code) {
-                $user->markEmailAsVerified();
-                $user->code = null;
-                $user->save();
-                // Auth::login($user);
-                $data = [
-                    // 'id' => $user->id,
-                    // 'role' => $user->role,
-                    // 'token' => $user->createToken('API Token')->accessToken,
-                    'message' => 'verified',
-                ];
-                return response()->json($data, 200);
-            } else {
-                return response()->json('the link you are trying to access is no longer available', 403);
-            }
-        }
-    }
+    
     public function resent_verification(Request $request)
     {
         $request->validate([
@@ -229,7 +202,7 @@ class AuthController extends Controller
         } else {
             try {
                 //code...
-                $user->code = Str::random(10);
+                $user->code = Str::random(6);
                 $user->save();
                 $data = [
                     'url' => env('APP_URL') . '/api/email/verify?id=' . $user->id . '&code=' . $user->code,
@@ -260,8 +233,8 @@ class AuthController extends Controller
             'name' => $request->name,
             'gender' => $request->gender,
         ];
-        if ($request->file('file')) {
-            $file = $request->file('file');
+        if ($request->file('profile_picture')) {
+            $file = $request->file('profile_picture');
             $content = $file->get();
             $extension = $file->extension();
             $user->profile_picture()->update([
@@ -373,7 +346,7 @@ class AuthController extends Controller
             'role' => $request->role,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
-            'code' => Str::random(10),
+            'code' => Str::random(6),
         ]);
 
 

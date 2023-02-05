@@ -85,13 +85,6 @@ Route::middleware(['auth:api'])->group(function () {
     // code:
     //response :
     // message 
-    Route::get('/email/verify', [AuthController::class, 'verify_by_link']);
-    // id:
-    // code:
-    //response :
-    // message 
-
-
     Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
     // email:
     //response :
@@ -131,9 +124,9 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         // phone_number
         // password:
         // password_confirmation:
-        // file: containing the binary picture
+        // profile_picture: containing the binary picture
         //response :
-        // name,email,gender,profile_picture,profile_picture_src,role 
+        // name,email,gender,profile_picture,role 
 
     });
 
@@ -144,6 +137,8 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     */
 
     Route::middleware('permission:admin')->prefix('admin')->group(function () {
+        Route::get('stats', [DashboardController::class, 'stats']);
+
 
         Route::get('branchs/{id?}', [DepartementController::class, 'branchs']);
         //response :
