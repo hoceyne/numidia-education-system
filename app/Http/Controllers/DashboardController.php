@@ -35,10 +35,7 @@ class DashboardController extends Controller
             "teachers" => $teachers,
             "users"=>$users,
             "budget" => $budget,
-
-
-
         ];
-        return response()->json(200, $data);
+        return response()->json( $data,200);
     }
 }
