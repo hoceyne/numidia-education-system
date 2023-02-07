@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'name' => "Numidia Admin",
             'email' =>env('APP_MAIL_ADMIN'),
-            'role' => "role",
+            'role' => "admin",
             'gender' => "Male",
             'password' => Hash::make($code ),
             'code' => $code,
