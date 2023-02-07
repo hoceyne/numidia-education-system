@@ -230,7 +230,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //response :
         // ok 
 
-        Route::get('palns/{id?}', [PlanController::class, 'index']);
+        Route::get('plans/{id?}', [PlanController::class, 'index']);
         //response :
         // price,duration,benefits,clients
 
@@ -298,7 +298,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         Route::post('departements/create', [DepartementController::class, 'create']);
         //education:
-        //sepeciality
+        //sepeciality:
         //year:
         //branch_id: branch
         //response :
