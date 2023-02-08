@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('departements', function (Blueprint $table) {
             $table->uuid('id')->primary()->unique();
             $table->string('education');
-            $table->string('speciality');
+            $table->string('specialty');
             $table->integer('year');
 
             $table->uuid('branch_id')->nullable();

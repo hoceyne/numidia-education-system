@@ -35,7 +35,7 @@ class DepartementController extends Controller
     {
         $departement = Departement::create([
             'education' => $request->education,
-            'sepciality' => $request->sepciality,
+            'specialty' => $request->specialty,
             'year' => $request->year,
 
         ]);

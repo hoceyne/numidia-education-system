@@ -12,7 +12,7 @@ class Departement extends Model
     
     protected $fillable = [
         'education',
-        'sepciality',
+        'specialty',
         'year',
 
     ];

@@ -294,11 +294,11 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         Route::get('departements/{id?}', [DepartementController::class, 'index']);
         //response :
-        // branch,education,sepciality,year
+        // branch,education,specialty,year
 
         Route::post('departements/create', [DepartementController::class, 'create']);
         //education:
-        //sepeciality:
+        //specialty:
         //year:
         //branch_id: branch
         //response :
