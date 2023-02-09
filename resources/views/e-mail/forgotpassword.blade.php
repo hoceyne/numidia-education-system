@@ -51,11 +51,11 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <img src="{{ asset('logo.png') }}">Numidia
+                <img src="{{Storage::url('storage/logo.png') }}">Numidia
             </div>
             <h2>Welcome to Numidia The Place to Learn</h2>
         </div>
-        <p style="text-transform:capitalize;">Dear {{ $data->name }},</p>
+        <p style="text-transform:capitalize;">Dear {{ $data['name'] }},</p>
 
         <p>We received a request to reset your password for your account with us. If you did not make this request, simply ignore this email.</p>
         <p>To reset your password, we generate for you a temparery password till you changed id:</p>

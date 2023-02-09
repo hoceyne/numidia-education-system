@@ -54,15 +54,15 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <img src="{{ asset('logo.png') }}">Numidia
+                <img src="{{asset('storage/logo.png') }}">Numidia
             </div>
             <h2>Welcome to Numidia The Place to Learn</h2>
         </div>
-        <p style="text-transform:capitalize;">Dear {{ $data->name }},</p>
+        <p style="text-transform:capitalize;">Dear {{ $data['name']}},</p>
 
         <p>Thank you for registering with our platform.</p>
         <p>Please use the following code to verify your email address:</p>
-        <p><strong>{{ $data->code }}</strong></p>
+        <p><strong>{{ $data['code'] }}</strong></p>
         <p>If you did not request this verification, please ignore this email.</p>
         <p>Best regards,</p>
         <p>The Team </p>

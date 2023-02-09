@@ -227,7 +227,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //response :
         // ok 
 
-        Route::get('plans/{id?}', [PlanController::class, 'index']);
+        Route::get('plans/{id?}}', [PlanController::class, 'index']);
         //response :
         // price,duration,benefits,clients
 
@@ -307,7 +307,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         Route::put('departements/{id}/update', [DepartementController::class, 'update']);
         //education:
-        //sepeciality
+        //speciality
         //year:
         //branch_id: branch
         //response :
