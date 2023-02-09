@@ -54,7 +54,7 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <img src="{{asset('storage/logo.png') }}">Numidia
+                <img src="{{asset('logo.png') }}">Numidia
             </div>
             <h2>Welcome to Numidia The Place to Learn</h2>
         </div>
