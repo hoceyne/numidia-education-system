@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SocialController;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 use Illuminate\Support\Facades\Route;
 
@@ -80,6 +79,9 @@ Route::post('/forgotpassword', [AuthController::class, 'forgotpassword']);
 //Protected routes
 
 Route::middleware(['auth:api'])->group(function () {
+
+    Route::get('logout', [AuthController::class, 'logout']);
+
     Route::post('/email/verify', [AuthController::class, 'verify']);
     // email:
     // code:
@@ -107,28 +109,23 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 
 
-    Route::prefix('auth')->group(function () {
+    Route::get('profile/{id}', [AuthController::class, 'show']);
+    //get the user data
+    //response :
+    // name,email,gender,profile_picture,profile_picture_src,role  
 
-        Route::get('logout', [AuthController::class, 'logout']);
+    Route::post('profile/{id}/update', [AuthController::class, 'update']);
+    //modify user data
+    //the data heer has to be form data
+    // name:
+    // gender:
+    // phone_number
+    // password:
+    // password_confirmation:
+    // profile_picture: containing the binary picture
+    //response :
+    // name,email,gender,profile_picture,role 
 
-        Route::get('profile/{id}', [AuthController::class, 'show']);
-        //get the user data
-        //response :
-        // name,email,gender,profile_picture,profile_picture_src,role  
-
-        Route::post('profile/{id}/update', [AuthController::class, 'update']);
-        //modify user data
-        //the data heer has to be form data
-        // name:
-        // gender:
-        // phone_number
-        // password:
-        // password_confirmation:
-        // profile_picture: containing the binary picture
-        //response :
-        // name,email,gender,profile_picture,role 
-
-    });
 
     /*
      *

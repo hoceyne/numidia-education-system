@@ -1,40 +1,72 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Code Verification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: skyblue;
-            color: white;
-            font-family: Arial, sans-serif;
+        * {
+            font-family: 'Open Sans', sans-serif;
         }
-        h3 {
-            text-align: center;
-            margin-top: 50px;
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
         }
-        p {
-            text-align: center;
-            margin-top: 20px;
+
+        img {
+            width: 60px;
+            height: 60px;
+            margin-right: 20px;
+            border-radius: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px 2px #999999;
         }
-        h2 {
-            text-align: center;
-            background-color: slateblue;
-            padding: 10px 20px;
-            margin-top: 20px;
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+        }
+
+        strong {
+            font-size: 30px;
         }
     </style>
 </head>
+
 <body>
-    <h3>Dear {{ $data['name'] }},</h3>
-    <p>We received a request to verify your email address with us. If you did not make this request, simply ignore this email.</p>
-    <p>To verify your email, use the following code:</p>
-    <h2>{{ $data['code'] }}</h2>
-    <p>If you need further assistance, please feel free to reach out to us at support@example.com.</p>
-    <p>Best regards,</p>
-    <p>The Support Team</p>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="{{ asset('logo.png') }}">Numidia
+            </div>
+            <h2>Welcome to Numidia The Place to Learn</h2>
+        </div>
+        <p style="text-transform:capitalize;">Dear {{ $data->name }},</p>
+
+        <p>Thank you for registering with our platform.</p>
+        <p>Please use the following code to verify your email address:</p>
+        <p><strong>{{ $data->code }}</strong></p>
+        <p>If you did not request this verification, please ignore this email.</p>
+        <p>Best regards,</p>
+        <p>The Team </p>
+    </div>
 </body>
+
 </html>
