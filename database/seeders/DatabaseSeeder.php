@@ -6,7 +6,7 @@ namespace Database\Seeders;
 
 use App\Mail\VerifyEmail;
 use App\Models\Admin;
-use App\Models\Branch;
+use App\Models\Departement;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -24,13 +24,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Branch::create([
+        Departement::create([
             'name' => "numidia school",
         ]);
-        Branch::create([
+        Departement::create([
             'name' => "numidia profession",
         ]);
-        Branch::create([
+        Departement::create([
             'name' => "numidia academy",
         ]);
 
