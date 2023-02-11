@@ -15,12 +15,7 @@ return new class extends Migration
     {
         Schema::create('departements', function (Blueprint $table) {
             $table->uuid('id')->primary()->unique();
-            $table->string('education');
-            $table->string('specialty')->nullable();
-            $table->integer('year');
-
-            $table->uuid('branch_id')->nullable();
-            $table->foreign('branch_id')->references('id')->on('branches');
+            $table->string('name');
             $table->timestamps();
         });
     }

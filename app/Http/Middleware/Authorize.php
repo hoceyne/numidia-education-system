@@ -17,7 +17,7 @@ class Authorize
      */
     public function handle(Request $request, Closure $next, $role)
     {
-        if ($request->role == 'client' && $role == "client" && (Auth::user()->role == 'student' or Auth::user()->role == 'parent')) {
+        if ((Auth::user()->role == 'student' or Auth::user()->role == 'parent')) {
             return $next($request);
         }
         if ($request->role != $role or Auth::user()->role != $role) {

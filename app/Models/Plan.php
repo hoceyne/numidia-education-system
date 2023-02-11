@@ -19,9 +19,9 @@ class Plan extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function departement()
+    public function level()
     {
-        return $this->belongsTo(Departement::class);
+        return $this->belongsTo(Level::class);
     }
 
     public function clients()

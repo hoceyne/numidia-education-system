@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Mail\VerifyEmail;
 use App\Models\Admin;
-use App\Models\Departement;
+use App\Models\Level;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\Session;
@@ -207,7 +207,7 @@ class AdminController extends Controller
         foreach ($groups as $group) {
             # code...
             $group['teacher'] = $group->teacher->user;
-            $group['departement'] = $group->departement;
+            $group['level'] = $group->level;
             $group['members'] = [];
             foreach ($group->students as $student) {
                 # code...
@@ -222,19 +222,19 @@ class AdminController extends Controller
 
         $request->validate([
             'teacher_id' => ['required'],
-            'departement_id' => ['required'],
+            'level_id' => ['required'],
             'name' => ['required', 'string'],
             'capacity' => ['required', 'integer'],
         ]);
 
         $teacher = Teacher::find($request->teacher_id);
-        $departement = Departement::find($request->departement_id);
+        $level = Level::find($request->level_id);
         $group = Group::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
         ]);
         $teacher->groups()->save($group);
-        $departement->groups()->save($group);
+        $level->groups()->save($group);
 
         return response()->json(200);
     }
@@ -254,7 +254,7 @@ class AdminController extends Controller
 
         $request->validate([
             'teacher_id' => ['required'],
-            'departement_id' => ['required'],
+            'level_id' => ['required'],
             'name' => ['required', 'string'],
             'capacity' => ['required', 'integer'],
 
@@ -262,13 +262,13 @@ class AdminController extends Controller
         $group = Group::find($id);
         $group->delete();
         $teacher = Teacher::find($request->teacher_id);
-        $departement = Departement::find($request->departement_id);
+        $level = Level::find($request->level_id);
         $group = Group::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
         ]);
         $teacher->groups()->save($group);
-        $departement->groups()->save($group);
+        $level->groups()->save($group);
 
 
 

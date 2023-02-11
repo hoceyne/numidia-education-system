@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DepartementController;
+use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PlanController;
@@ -75,6 +75,10 @@ Route::post('/forgotpassword', [AuthController::class, 'forgotpassword']);
 //response :
 // ok
 
+Route::get('plans/{id?}', [PlanController::class, 'all']);
+    //response :
+    // price,duration,benefits,clients
+
 
 //Protected routes
 
@@ -90,7 +94,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/email/resent/code', [AuthController::class, 'resent_verification']);
     // email:
     //response :
-    // message   
+    // message  
+    
+    Route::middleware('permission:client')->group(function () {
+        Route::post('clients/choose/plan', [PlanController::class, 'choose_plan']);
+        // client_id:
+        // plan_id:
+        //response :
+        // ok
+    });
 });
 
 
@@ -107,7 +119,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('/', 'index');
         //dashboard for news and statisctics
     });
-
+    
 
     Route::get('profile/{id}', [AuthController::class, 'show']);
     //get the user data
@@ -137,23 +149,11 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('stats', [DashboardController::class, 'stats']);
 
 
-        Route::get('branchs/{id?}', [DepartementController::class, 'branchs']);
+        Route::get('departements/{id?}', [LevelController::class, 'departements']);
         //response :
         // name
 
-        Route::post('branchs/create', [DepartementController::class, 'create_branch']);
-        //name
-        //response :
-        // ok 
-
-        Route::delete('branchs/{id}/delete', [DepartementController::class, 'delete_branch']);
-        //response :
-        // ok
-
-        Route::put('branchs/{id}/update', [DepartementController::class, 'update_branch']);
-        //name
-        //response :
-        // ok 
+       
 
         Route::get('users/{id?}', [AdminController::class, 'users']);
         //get users or secific user
@@ -227,19 +227,20 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //response :
         // ok 
 
-        Route::get('plans/{id?}}', [PlanController::class, 'index']);
-        //response :
-        // price,duration,benefits,clients
-
+       
         Route::post('plans/create', [PlanController::class, 'create']);
         //price:
         //duration
         //benefits:
-        //departement_id:id of the departement
+        //level_id:id of the level
         //teacher_id:id of the teacher
-
         //response :
         // ok
+
+        Route::get('plans/{id?}', [PlanController::class, 'index']);
+    //response :
+    // price,duration,benefits,clients
+
 
         Route::delete('plans/{id}/delete', [PlanController::class, 'delete']);
         //response :
@@ -249,7 +250,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //price:
         //duration
         //benefits:
-        //departement_id:id of the departement
+        //level_id:id of the level
         //teacher_id:id of the teacher
 
         //response :
@@ -257,12 +258,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
         Route::get('groups/{id?}', [AdminController::class, 'groups']);
         //response :
-        // name,members,capacity,teacher,departement
+        // name,members,capacity,teacher,level
 
         Route::post('groups/create', [AdminController::class, 'create_group']);
         //name:
         //capacity
-        //departement_id:id of the departement
+        //level_id:id of the level
         //teacher_id:id of the teacher
 
         //response :
@@ -275,7 +276,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::put('groups/{id}/update', [AdminController::class, 'update_group']);
         //name:
         //capacity:
-        //departement_id:id of the departement
+        //level_id:id of the level
         //teacher_id:id of the teacher
 
 
@@ -289,27 +290,27 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         // ok 
 
 
-        Route::get('departements/{id?}', [DepartementController::class, 'index']);
+        Route::get('levels/{id?}', [LevelController::class, 'index']);
         //response :
-        // branch,education,specialty,year
+        // departement,education,specialty,year
 
-        Route::post('departements/create', [DepartementController::class, 'create']);
+        Route::post('levels/create', [LevelController::class, 'create']);
         //education:
         //specialty:
         //year:
-        //branch_id: branch
+        //departement_id: departement
         //response :
         // ok 
 
-        Route::delete('departements/{id}/delete', [DepartementController::class, 'delete']);
+        Route::delete('levels/{id}/delete', [LevelController::class, 'delete']);
         //response :
         // ok
 
-        Route::put('departements/{id}/update', [DepartementController::class, 'update']);
+        Route::put('levels/{id}/update', [LevelController::class, 'update']);
         //education:
         //speciality
         //year:
-        //branch_id: branch
+        //departement_id: departement
         //response :
         // ok 
     });
@@ -335,13 +336,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //response :
         // ok
     });
-    Route::middleware('permission:supervisor')->prefix('parent')->group(function () {
-        Route::post('clients/choose/plan', [PlanController::class, 'choose_plan']);
-        // client_id:
-        // plan_id:
-        //response :
-        // ok
-    });
+    
 
 
     Route::middleware('permission:supervisor')->prefix('parent')->group(function () {

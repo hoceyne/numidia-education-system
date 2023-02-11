@@ -21,8 +21,8 @@ return new class extends Migration
 
             $table->uuid('teacher_id')->nullable();
             $table->foreign('teacher_id')->references('id')->on('teachers');
-            $table->uuid('departement_id')->nullable();
-            $table->foreign('departement_id')->references('id')->on('departements');
+            $table->uuid('level_id')->nullable();
+            $table->foreign('level_id')->references('id')->on('levels');
             $table->timestamps();
         });
     }

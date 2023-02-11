@@ -11,27 +11,16 @@ class Departement extends Model
     use HasFactory,HasUuids;
     
     protected $fillable = [
-        'education',
-        'specialty',
-        'year',
+        'name',
 
     ];
 
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function branch(){
-        return $this->belongsTo(Branch::class);
-    }
-    
-    function plans(){
-        return $this->hasMany(Plan::class);
-    }
-    function modules(){
-        return $this->hasMany(Module::class);
-    }
 
-    function groups(){
-        return $this->hasMany(Group::class);
+    
+    function levels(){
+        return $this->hasMany(Level::class);
     }
 }
