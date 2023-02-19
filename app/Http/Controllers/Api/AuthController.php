@@ -187,7 +187,7 @@ class AuthController extends Controller
             }
         }
     }
-    
+
     public function resent_verification(Request $request)
     {
         $request->validate([
@@ -217,6 +217,12 @@ class AuthController extends Controller
             }
             return response()->json('Code sent', 200);
         }
+    }
+    public function email_verified(Request $request)
+    {
+
+        $user = User::where('email', $request->email)->first();
+        return response()->json(["verified" => $user->hasVerifiedEmail()], 200);
     }
     public function update(Request $request, $id)
     {
@@ -301,7 +307,7 @@ class AuthController extends Controller
         return response()->json($data, 200);
     }
 
-    public function provider_login(Request $request,$provider)
+    public function provider_login(Request $request, $provider)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
@@ -320,7 +326,7 @@ class AuthController extends Controller
     }
 
 
-    public function provider_store(Request $request,$provider)
+    public function provider_store(Request $request, $provider)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
