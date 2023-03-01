@@ -76,5 +76,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function profile_picture(){
         return $this->hasOne(File::class);
     }
+    function posts(){
+        return $this->hasMany(Post::class);
+    }
 
 }

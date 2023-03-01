@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\DashboardController;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
@@ -124,6 +125,26 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         //dashboard for news and statisctics
     });
     
+
+    Route::controller(PostController::class)->group(function(){
+        Route::get('posts/{id?}', 'index');
+        //response :
+        // title,content,created_at,author
+
+        Route::post('posts/create', 'create');
+        //title,content,author
+        //response :
+        // ok
+
+        Route::delete('posts/{id}/delete','delete');
+        //response :
+        // ok
+
+        Route::put('posts/{id}/update','update');
+        //title,content,author
+        //response :
+        // ok 
+    });
 
     Route::get('profile/{id}', [AuthController::class, 'show']);
     //get the user data

@@ -64,8 +64,7 @@ class LevelController extends Controller
     public function update(Request $request, $id)
     {
 
-        $old_level = Level::find($id);
-        $old_level->delete();
+        
 
         $level = Level::updateOrCreate(['id' => $id], [
             'education' => $request->education,
