@@ -96,10 +96,6 @@ Route::middleware(['auth:api'])->group(function () {
     // email:
     //response :
     // message  
-    Route::get('/email/isverified', [AuthController::class, 'email_verified']);
-    // email:
-    //response :
-    // message ok or not 
     
     Route::middleware('permission:client')->group(function () {
         Route::post('clients/choose/plan', [PlanController::class, 'choose_plan']);
